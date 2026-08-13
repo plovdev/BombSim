@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <useControls filename="assets/Interface/screens/footer.xml"/>
+
+    <screen id="settings" controller="com.plovdev.bombsim.controls.gui.SettingsScreenControl">
+        <layer childLayout="center">
+            <panel id="settings-panel" height="100%" width="100%" align="center" valign="center" childLayout="center"
+                   visibleToMouse="false">
+                <control type="button" id="settings" name="setting_btn" width="35px" height="35px" label="->"
+                         align="right" valign="top" focusable="false">
+                    <interact onClick="back()"/>
+                </control>
+
+                <text font="aurulent-sans-16.fnt" color="#4d4c4b" text="Звук" align="left" valign="top" width="90px"
+                      height="25px"/>
+            </panel>
+            <effect>
+                <onStartScreen name="move" mode="in" direction="right" length="300" startDelay="0" inherit="true"/>
+                <onEndScreen name="move" mode="out" direction="right" length="300" startDelay="0" inherit="true"/>
+            </effect>
+
+            <control name="footer"/>
+        </layer>
+    </screen>
+</nifty>

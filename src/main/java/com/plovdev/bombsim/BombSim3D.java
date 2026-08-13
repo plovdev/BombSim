@@ -9,7 +9,6 @@ import com.plovdev.bombsim.controls.BombControl;
 import com.plovdev.bombsim.events.EventManager;
 import com.plovdev.bombsim.events.impls.BombModel;
 import com.plovdev.bombsim.events.impls.ModelChangeEventListener;
-import com.plovdev.bombsim.gui.controls.MainScreenControl;
 import com.plovdev.bombsim.states.GameAppState;
 import com.plovdev.bombsim.states.MenuAppState;
 import de.lessvoid.nifty.Nifty;
@@ -45,8 +44,6 @@ public class BombSim3D extends SimpleApplication {
         display = NiftyJmeDisplay.newNiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         nifty = display.getNifty();
         guiViewPort.addProcessor(display);
-        nifty.addXml("assets/Interface/screens/sound.xml");
-        nifty.fromXml("assets/Interface/screens/main.xml", "main", new MainScreenControl());
 
         // Init Model
         reattachBomb(prefs.get("current-model", "assets/Models/Bomb-yellow_SCREEN.glb"));
@@ -58,9 +55,9 @@ public class BombSim3D extends SimpleApplication {
         }));
 
         // Init states
-        menuAppState = new MenuAppState(bombModel);
+        menuAppState = new MenuAppState(bombModel, nifty);
         gameAppState = new GameAppState(bombModel);
-        //gameAppState.setEnabled(false);
+        gameAppState.setEnabled(false);
 
         stateManager.attach(menuAppState);
         stateManager.attach(gameAppState);

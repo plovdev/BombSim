@@ -15,8 +15,16 @@ import com.jme3.scene.Node;
 import com.plovdev.bombsim.audio.AudioPlayerUtils;
 import org.jspecify.annotations.NonNull;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class BombSimInitializer {
     private BombSimInitializer() {
+    }
+
+    static {
+        Logger.getLogger("de.lessvoid.nifty").setLevel(Level.ALL);
+        Logger.getLogger("NiftyInputEventHandlingLog").setLevel(Level.ALL);
     }
 
     public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp) {

@@ -12,7 +12,5 @@ public class Main {
         AppSettings settings = PreferencesStorage.getSettings();
         BombSim3D bombSim3D = new BombSim3D(settings);
         bombSim3D.start();
-
-
     }
 }

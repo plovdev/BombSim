@@ -3,7 +3,7 @@
     <useStyles filename="nifty-default-styles.xml"/>
     <useControls filename="nifty-default-controls.xml"/>
 
-    <screen id="sound" controller="com.plovdev.bombsim.gui.controls.MainScreenControl">
+    <screen id="sound" controller="com.plovdev.bombsim.controls.gui.MainScreenControl">
         <layer childLayout="center">
             <control type="button" id="settings" name="setting_btn" width="35px" height="35px" label="S" align="right"
                      valign="top" focusable="false">

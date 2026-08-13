@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <useControls filename="assets/Interface/screens/header.xml"/>
+    <useControls filename="assets/Interface/screens/footer.xml"/>
+
+    <screen id="menu" controller="com.plovdev.bombsim.controls.gui.MenuScreenControl">
+        <layer childLayout="vertical" width="100%" height="100%">
+            <panel height="15%" width="100%" childLayout="vertical">
+                <control name="header"/>
+            </panel>
+            <panel height="35%" width="100%" childLayout="vertical"/>
+
+            <panel height="35%" width="100%" childLayout="vertical" align="center">
+                <panel childLayout="vertical" width="40%" align="center">
+                    <control name="button" id="newGameButton" label="New Game" width="100%" height="55px"
+                             align="center">
+                        <interact onClick="newGame()"/>
+                    </control>
+                    <panel height="15px" childLayout="vertical"/>
+                    <control name="button" id="authorsButton" label="Authors" width="100%" height="55px" align="center">
+                        <interact onClick="showAuthors()"/>
+                    </control>
+                    <panel height="15px" childLayout="vertical"/>
+                    <control name="button" id="exitButton" label="Exit" width="100%" height="55px" align="center">
+                        <interact onClick="exitGame()"/>
+                    </control>
+                </panel>
+            </panel>
+
+            <panel height="15%" width="100%" childLayout="horizontal">
+                <control name="footer"/>
+            </panel>
+        </layer>
+    </screen>
+</nifty>
