@@ -7,12 +7,12 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
-import de.lessvoid.nifty.Nifty;
 import com.plovdev.bombsim.controls.BombControl;
 import com.plovdev.bombsim.events.EventManager;
 import com.plovdev.bombsim.events.impls.BombModel;
 import com.plovdev.bombsim.events.impls.ModelChangeEventListener;
 import com.plovdev.bombsim.gui.controls.MainScreenControl;
+import de.lessvoid.nifty.Nifty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,11 +97,10 @@ public class BombSim3D extends SimpleApplication {
             bombModel = (Node) assetManager.loadModel(path);
             if (bombModel != null) {
                 rootNode.attachChild(bombModel);
-                bombModel.addControl(new BombControl(bombModel, inputManager, assetManager, cam));
+                bombModel.addControl(new BombControl(inputManager, assetManager, cam));
             }
         } catch (Exception e) {
             log.error("Ошибка загрузки модели: {}", path, e);
-            reattachBomb("assets/Models/bomb.j3o");
         }
     }
 

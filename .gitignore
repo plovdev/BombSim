@@ -8,6 +8,10 @@ target/
 *.ipr
 *.jar
 
+*.dylib
+*.dll
+*.so
+
 ### Eclipse ###
 .apt_generated
 .classpath

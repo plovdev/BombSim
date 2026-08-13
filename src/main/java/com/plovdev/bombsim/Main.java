@@ -11,6 +11,7 @@ public class Main {
         AppSettings settings = new AppSettings(true);
         try {
             settings.load("BombSim");
+            System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
         } catch (Exception e) {
             log.error("Settings loading error: ", e);
             settings.setTitle("BombSim 3");

@@ -4,9 +4,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -17,65 +14,29 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.plovdev.bombsim.events.EventManager;
 import com.plovdev.bombsim.events.impls.BombTextChangedEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.jspecify.annotations.NonNull;
 
 public class BombTextControl extends AbstractControl {
     private final BitmapText text;
-    private BombTextControl textControl;
-    private final Spatial display;
+    private Spatial display;
     private final Node displayNode = new Node("DisplayNode");
-    private Node bombModel;
-    private final List<Character> characters = new CopyOnWriteArrayList<>();
-    private int visibleChars = 10;
+    private final StringBuilder characters = new StringBuilder();
 
+    private Node model;
+    private BombTextControl textControl;
+
+    private int visibleChars = 10;
     private int start = 0;
     private int end = visibleChars;
     private int tick = 1;
 
-    private TextCorrector corrector = s -> s;
-
-
-    public BombTextControl(Node bomb, AssetManager assetManager, InputManager inputManager) {
-        bombModel = bomb;
-        display = bombModel.getChild("Display");
-
+    public BombTextControl(@NonNull AssetManager assetManager, @NonNull InputManager inputManager) {
         BitmapFont font = assetManager.loadFont("Interface/Fonts/Default.fnt");
         font.setRightToLeft(false);
         text = new BitmapText(font);
         text.setSize(0.3f);
         text.setQueueBucket(RenderQueue.Bucket.Transparent);
         text.setColor(ColorRGBA.Black);
-
-        displayNode.attachChild(text);
-        Vector3f textPos = display.getLocalTranslation();
-        displayNode.setLocalTranslation(calculateTextPosition());
-        bombModel.attachChild(displayNode);
-
-        //Example mapping(for test)
-        inputManager.addMapping("NextText", new KeyTrigger(KeyInput.KEY_RIGHT));
-        inputManager.addMapping("PrevText", new KeyTrigger(KeyInput.KEY_LEFT));
-        inputManager.addMapping("Clear", new KeyTrigger(KeyInput.KEY_C));
-        inputManager.addMapping("Delete", new KeyTrigger(KeyInput.KEY_DELETE));
-        inputManager.addMapping("Reverse", new KeyTrigger(KeyInput.KEY_R));
-
-        inputManager.addListener((ActionListener) (name, pressed, tpf) -> {
-            if (pressed) {
-                if (name.equals("NextText")) {
-                    next();
-                } else {
-                    previos();
-                }
-
-                switch (name) {
-                    case "Clear" -> clear();
-                    case "Reverse" -> reverse();
-                    case "Delete" -> delete();
-                }
-            }
-        }, "NextText", "PrevText", "Clear", "Reverse", "Delete");
 
         EventManager.getInstance().subscribe(new BombTextChangedEventListener(e -> {
             if (e instanceof String changed) {
@@ -84,57 +45,26 @@ public class BombTextControl extends AbstractControl {
         }));
     }
 
+    @Override
+    public void setSpatial(Spatial spatial) {
+        model = (Node) spatial;
+        display = model.getChild("Display");
+        model.attachChild(displayNode);
+
+        displayNode.attachChild(text);
+        displayNode.setLocalTranslation(calculateTextPosition());
+    }
+
     public void updateController(String text) {
         addText(text);
     }
 
-    private Vector3f calculateTextPosition() {
+    private @NonNull Vector3f calculateTextPosition() {
         Vector3f textPos = display.getLocalTranslation();
         float x = textPos.x - 0.825f;
         float y = textPos.y + 0.97f;
         float z = textPos.z + 0.724f;
         return new Vector3f(x, y, z);
-    }
-
-    public BitmapText getText() {
-        return text;
-    }
-
-    public BombTextControl getTextControl() {
-        return textControl;
-    }
-
-    public void setTextControl(BombTextControl textControl) {
-        this.textControl = textControl;
-    }
-
-    public Spatial getDisplay() {
-        return display;
-    }
-
-    public Node getDisplayNode() {
-        return displayNode;
-    }
-
-    public Node getBombModel() {
-        return bombModel;
-    }
-
-    public void setBombModel(Node bombModel) {
-        this.bombModel = bombModel;
-    }
-
-    public TextCorrector getCorrector() {
-        return corrector;
-    }
-
-    public void setCorrector(TextCorrector corrector) {
-        this.corrector = corrector;
-        updateBombText();
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
     }
 
     public int getStart() {
@@ -170,90 +100,75 @@ public class BombTextControl extends AbstractControl {
         updateBombText();
     }
 
-    public synchronized void addText(String text) {
-        for (char ch : text.toCharArray()) {
-            characters.add(ch);
-        }
+    public void addText(@NonNull String text) {
+        characters.append(text);
         updateBombText();
         next();
     }
 
     public String getChars() {
-        return corrector.correct(buildText(characters));
+        return characters.toString();
     }
 
-    public synchronized void removeText(String text) {
-        for (char ch : text.toCharArray()) {
-            characters.remove(ch);
-        }
+    public void removeText(int s, int e) {
+        characters.delete(s, e);
         updateBombText();
     }
+
     public void clear() {
-        characters.clear();
+        characters.setLength(0);
         updateBombText();
     }
 
-    public void updateBombText() {
-        updateBombText(corrector);
-    }
-
-    public synchronized void updateBombText(TextCorrector corrector) {
-        List<Character> chars = characters.subList(0, Math.min(characters.size(), visibleChars));
-        String buildedText = corrector.correct(buildText(chars));
+    public synchronized void updateBombText() {
+        String buildedText = characters.substring(0, Math.min(characters.length(), visibleChars));
         text.setText(buildedText);
-    }
-
-    private String buildText(List<Character> chars) {
-        StringBuilder builder = new StringBuilder();
-        chars.forEach(builder::append);
-        return builder.toString();
     }
 
     public void paginateText() {
         paginateText(start, end);
     }
+
     public synchronized void paginateText(int start, int end) {
-        int size = characters.size();
-        List<Character> chars = characters.subList(start, Math.min(size, end));
-        if (chars.size() < visibleChars) return;
-        String buildedText = corrector.correct(buildText(chars));
-        text.setText(buildedText);
+        int size = characters.length();
+        String chars = characters.substring(start, Math.min(size, end));
+        if (chars.length() < visibleChars) return;
+        text.setText(chars);
     }
 
     public void next() {
-        if (characters.size() <= visibleChars) return;
+        int chLength = characters.length();
+        if (chLength <= visibleChars) return;
 
-        setStart(Math.min(characters.size(), getStart() + tick));
+        setStart(Math.min(chLength, getStart() + tick));
         setEnd(getEnd() + tick);
         paginateText();
     }
+
     public void previos() {
-        if (characters.size() <= visibleChars) return;
+        if (characters.length() <= visibleChars) return;
 
         setStart(Math.max(0, getStart() - tick));
         setEnd(Math.max(visibleChars, (getEnd() - tick)));
         paginateText();
     }
+
     public synchronized void reverse() {
-        List<Character> chars = new ArrayList<>(characters.reversed());
-        characters.clear();
-        characters.addAll(chars);
+        characters.reverse();
         updateBombText();
     }
 
     public synchronized void delete() {
         if (characters.isEmpty()) return;
-        characters.removeLast();
+        characters.deleteCharAt(characters.length() - 1);
         updateBombText();
     }
 
     @Override
     protected void controlUpdate(float v) {
-
     }
 
     @Override
     protected void controlRender(RenderManager renderManager, ViewPort viewPort) {
-
     }
 }

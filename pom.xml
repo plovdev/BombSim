@@ -39,7 +39,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <jme.version>3.9.0-stable</jme.version>
-        <minie.version>9.0.3</minie.version>
         <logback.version>1.5.32</logback.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jb-annos.version>26.0.2</jb-annos.version>
@@ -81,13 +80,6 @@
             <artifactId>jme3-niftygui</artifactId>
             <version>${jme.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.stephengold</groupId>
-            <artifactId>Minie</artifactId>
-            <version>${minie.version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>ch.qos.logback</groupId>

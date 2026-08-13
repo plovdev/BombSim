@@ -38,11 +38,9 @@ public class SettingsScreenControl implements ScreenController {
 
     @Override
     public void onStartScreen() {
-
     }
 
     @Override
     public void onEndScreen() {
-
     }
 }
