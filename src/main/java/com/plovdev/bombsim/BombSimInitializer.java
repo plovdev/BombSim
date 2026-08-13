@@ -1,5 +1,6 @@
 package com.plovdev.bombsim;
 
+import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioData;
 import com.jme3.effect.ParticleEmitter;
@@ -18,10 +19,17 @@ public class BombSimInitializer {
     private BombSimInitializer() {
     }
 
-    public static void init(FilterPostProcessor fpp, Node root, AssetManager assetManager) {
+    public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp) {
+        Node root = application.getRootNode();
+        AssetManager assetManager = application.getAssetManager();
+
         addLight(root);
         applyFilters(fpp, root);
         initSky(assetManager, root);
+
+        application.getFlyByCamera().setEnabled(false);
+        application.setDisplayFps(false);
+        application.setDisplayStatView(false);
 
         createSparkEmitter(new Vector3f(0f, 0f, 0f), root, assetManager, "BombSpark1");
         createSparkEmitter(new Vector3f(6.5f, 7.5f, 0f), root, assetManager, "BombSpark2");
