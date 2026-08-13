@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <screen id="main" controller="com.plovdev.bombsim.gui.controls.MainScreenControl">
+        <layer childLayout="center">
+            <control type="button" id="settings" name="setting_btn" width="35px" height="35px" label="S" align="right"
+                     valign="top" focusable="false">
+                <interact onClick="onSettingsClicked()"/>
+            </control>
+            <control type="button" id="help" name="help_btn" width="35px" height="35px" label="?" align="left"
+                     valign="top" focusable="false">
+                <interact onClick="onHelpClicked()"/>
+            </control>
+
+            <text font="aurulent-sans-16.fnt" color="#4d4c4b" text="version-3.0.0R" align="left" valign="bottom"
+                  width="90px" height="25px"/>
+            <text font="aurulent-sans-16.fnt" color="#4d4c4b" text="(c)© PlovDev" align="right"
+                  valign="bottom" width="75px" height="25px"/>
+        </layer>
+    </screen>
+
+    <screen id="settings" controller="com.plovdev.bombsim.gui.controls.SettingsScreenControl">
+        <layer childLayout="center">
+            <panel id="settings-panel" height="100%" width="100%" align="center" valign="center" childLayout="center"
+                   visibleToMouse="false">
+                <control type="button" id="settings" name="setting_btn" width="35px" height="35px" label="->"
+                         align="right" valign="top" focusable="false">
+                    <interact onClick="back()"/>
+                </control>
+
+                <panel id="settings-content-panel" height="70%" width="30%" align="left" valign="top" childLayout="vertical">
+                    <text font="aurulent-sans-16.fnt" color="#0000" text="Звук" width="90px" height="25px"/>
+                </panel>
+
+                <text font="aurulent-sans-16.fnt" color="#4d4c4b" text="version-3.0.0R" align="left" valign="bottom"
+                      width="90px" height="25px"/>
+                <text font="aurulent-sans-16.fnt" color="#4d4c4b" text="(c) PlovDev" align="right"
+                      valign="bottom" width="75px" height="25px"/>
+            </panel>
+            <effect>
+                <onStartScreen name="move" mode="in" direction="right" length="300" startDelay="0" inherit="true"/>
+                <onEndScreen name="move" mode="out" direction="right" length="300" startDelay="0" inherit="true"/>
+            </effect>
+        </layer>
+    </screen>
+</nifty>
