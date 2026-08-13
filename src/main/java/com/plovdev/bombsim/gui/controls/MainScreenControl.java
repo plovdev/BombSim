@@ -1,5 +1,6 @@
 package com.plovdev.bombsim.gui.controls;
 
+import com.plovdev.bombsim.browser.BrowserOpener;
 import com.plovdev.bombsim.utils.Globals;
 import com.plovdev.bombsim.utils.Utils;
 import de.lessvoid.nifty.Nifty;
@@ -26,7 +27,7 @@ public class MainScreenControl implements ScreenController {
     }
 
     public void onHelpClicked() {
-        Globals.VIRTUAL_EXECUTOR.execute(Utils::showHelp);
+        Globals.VIRTUAL_EXECUTOR.execute(() -> Utils.showHelp(BrowserOpener.getInstance()));
     }
 
     @Override

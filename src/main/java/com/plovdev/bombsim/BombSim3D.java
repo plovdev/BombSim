@@ -13,6 +13,7 @@ import com.plovdev.bombsim.events.impls.BombModel;
 import com.plovdev.bombsim.events.impls.ModelChangeEventListener;
 import com.plovdev.bombsim.gui.controls.MainScreenControl;
 import de.lessvoid.nifty.Nifty;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +105,7 @@ public class BombSim3D extends SimpleApplication {
         }
     }
 
-    private void prepareModel(Node bomb) {
+    private void prepareModel(@NonNull Node bomb) {
         bomb.depthFirstTraversal(s -> {
             String name = s.getName();
             if (name == null) {
@@ -112,7 +113,6 @@ public class BombSim3D extends SimpleApplication {
             }
             if (name.startsWith("Button")) {
                 if (name.contains("ButtonsPane")) return;
-                System.out.println(name);
                 s.setUserData("Number", name.substring(6).replace("_0", "").replace("Node", ""));
             }
         });

@@ -9,10 +9,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.FastMath;
-import com.jme3.math.Ray;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -21,7 +18,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.plovdev.bombsim.audio.AudioManager;
-import com.plovdev.bombsim.commons.PreferencesStorage;
+import com.plovdev.bombsim.utils.PreferencesStorage;
 import com.plovdev.bombsim.events.EventManager;
 import com.plovdev.bombsim.events.impls.Sensitivity;
 import com.plovdev.bombsim.events.impls.SensitivityChangeEventLitener;
@@ -37,8 +34,8 @@ public class BombControl extends AbstractControl {
     private Node bombModel;
     private final InputManager inputManager;
     private float distance = 10f;
-    private float azm = 0;
-    private float elevation = 0f;
+    private float rotationX = 0;
+    private float rotationY = 0;
     private float lastX, lastY;
     private boolean rotating = false;
     private boolean dragging = false;
@@ -115,14 +112,11 @@ public class BombControl extends AbstractControl {
     }
 
     private void updateCamera() {
-        float offsetXZ = distance * FastMath.cos(elevation);
-        float camX = offsetXZ * FastMath.sin(azm);
-        float camY = distance * FastMath.sin(elevation);
-        float camZ = offsetXZ * FastMath.cos(azm);
+        if (bombModel == null) return;
 
         Vector3f bombPos = bombModel.getLocalTranslation();
-        cam.setLocation(new Vector3f(bombPos.x + camX, bombPos.y - camY, bombPos.z + camZ));
-
+        Vector3f camPos = new Vector3f(bombPos.x, bombPos.y, bombPos.z + distance);
+        cam.setLocation(camPos);
         cam.lookAt(bombPos, Vector3f.UNIT_Y);
     }
 
@@ -159,11 +153,10 @@ public class BombControl extends AbstractControl {
             float dx = x - lastX;
             float dy = y - lastY;
 
-            azm -= dx * rotateSensitivity;
-            elevation += dy * rotateSensitivity;
-            elevation = FastMath.clamp(elevation, -FastMath.HALF_PI + 0.1f, FastMath.HALF_PI - 0.1f);
+            rotationY += dx * rotateSensitivity;
+            rotationX += dy * rotateSensitivity;
+            bombModel.setLocalRotation(new Quaternion().fromAngles(-rotationX, rotationY, 0));
 
-            updateCamera();
             lastX = x;
             lastY = y;
         }

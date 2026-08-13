@@ -1,11 +1,11 @@
 package com.plovdev.bombsim.utils;
 
 import com.plovdev.bombsim.Main;
+import com.plovdev.bombsim.browser.BrowserOpener;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -21,16 +21,10 @@ public class Utils {
     public static void showPasswordErrorDialoge() {
     }
 
-    public static void showHelp() {
+    public static void showHelp(BrowserOpener opener) {
         try {
             HELP_DOC_HOLDER.compareAndSet(null, unpackHelpDocument());
-            if (Desktop.isDesktopSupported()) {
-                Desktop desktop = Desktop.getDesktop();
-                desktop.browse(HELP_DOC_HOLDER.get());
-            } else {
-                log.warn("Desktop is not supported.");
-                //TODO: show dialog
-            }
+            opener.open(HELP_DOC_HOLDER.get());
         } catch (Exception e) {
             log.error("Help initing error: ", e);
         }
