@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 public class BombControl extends AbstractControl {
     private static final Logger log = LoggerFactory.getLogger(BombControl.class);
 
-    private final AssetManager assetManager;
     private Node bombModel;
     private final InputManager inputManager;
     private float distance = 10f;
@@ -48,7 +47,6 @@ public class BombControl extends AbstractControl {
     private float zoomSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ZOOM_SENSENSITIVITY, 0.25f);
 
     public BombControl(InputManager im, AssetManager assetManager, Camera c) {
-        this.assetManager = assetManager;
         this.audioManager = new AudioManager(assetManager);
         this.textControl = new BombTextControl(assetManager, im);
         this.inputManager = im;
@@ -100,15 +98,17 @@ public class BombControl extends AbstractControl {
         }, "ZoomIn", "ZoomOut");
     }
 
-    private void updateDistance(float newDistane) {
-        distance = Math.max(2, Math.min(newDistane, 20));
+    private void updateDistance(float newDistance) {
+        distance = Math.max(2, Math.min(newDistance, 20));
     }
 
     @Override
     public void setSpatial(Spatial spatial) {
-        bombModel = (Node) spatial;
-        bombModel.addControl(textControl);
-        updateCamera();
+        if (spatial != null) {
+            bombModel = (Node) spatial;
+            bombModel.addControl(textControl);
+            updateCamera();
+        }
     }
 
     private void updateCamera() {
@@ -167,21 +167,21 @@ public class BombControl extends AbstractControl {
         AnimComposer composer = clicked.getControl(AnimComposer.class);
         composer.setCurrentAction("Press" + num, AnimComposer.DEFAULT_LAYER, false);
 
-        String inputedText = textControl.getChars();
+        String inputText = textControl.getChars();
         notifyTextUpdate(num);
         audioManager.playButtonPress(clicked);
 
         if (num.equals("*") || num.equals("#")) {
             String password = PreferencesStorage.get("password", "7355608");
             textControl.clear();
-            if (inputedText.equals(password)) {
+            if (inputText.equals(password)) {
                 if (num.equals("*")) {
                     //TODO: plant bomb
                 } else {
                     //TODO: diffuse bomb
                 }
             } else {
-                log.warn("Error password {}", inputedText);
+                log.warn("Error password {}", inputText);
                 Utils.showPasswordErrorDialoge();
             }
         }

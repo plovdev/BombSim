@@ -22,11 +22,6 @@ public class BombSimInitializer {
     private BombSimInitializer() {
     }
 
-    static {
-        Logger.getLogger("de.lessvoid.nifty").setLevel(Level.ALL);
-        Logger.getLogger("NiftyInputEventHandlingLog").setLevel(Level.ALL);
-    }
-
     public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp) {
         Node root = application.getRootNode();
         AssetManager assetManager = application.getAssetManager();
