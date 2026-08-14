@@ -116,6 +116,9 @@ public class BombControl extends AbstractControl {
             bombModel.addControl(textControl);
             bombText = "";
             bombRotation = new Quaternion().fromAngles(0, 0, 0);
+            bombRotation.set(Quaternion.IDENTITY);
+            rotationX = 0;
+            rotationY = 0;
             updateCamera();
         }
     }
@@ -135,11 +138,12 @@ public class BombControl extends AbstractControl {
         if (enabled) {
             textControl.updateController(bombText);
             bombModel.setLocalRotation(bombRotation);
+            updateCamera();
         } else {
             bombText = textControl.getChars();
             textControl.clear();
             if (bombModel != null) {
-                bombRotation = bombModel.getLocalRotation();
+                bombRotation.set(bombModel.getLocalRotation());
                 bombModel.setLocalRotation(Quaternion.IDENTITY);
             }
         }
