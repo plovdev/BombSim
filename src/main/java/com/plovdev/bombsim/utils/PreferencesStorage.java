@@ -1,9 +1,15 @@
 package com.plovdev.bombsim.utils;
 
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Platform;
+import com.plovdev.bombsim.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 
 public final class PreferencesStorage {
@@ -18,15 +24,21 @@ public final class PreferencesStorage {
         try {
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
             if (!SETTINGS.getBoolean("was-init", false)) {
-                //SETTINGS.putBoolean("was-init", true);
+                SETTINGS.putBoolean("was-init", true);
                 loadDefault();
             } else {
                 SETTINGS.load(PREFS_KEY);
             }
+
+            setupIcons();
         } catch (Exception e) {
             log.error("Settings loading error: ", e);
             loadDefault();
         }
+    }
+
+    private PreferencesStorage() {
+        throw new UnsupportedOperationException();
     }
 
     public static void savePreferences() {
@@ -47,7 +59,20 @@ public final class PreferencesStorage {
         SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);
     }
 
-    private PreferencesStorage() {
+    private static void setupIcons() {
+        if (JmeSystem.getPlatform().getOs() != Platform.Os.MacOS) {
+            try {
+                BufferedImage[] icons = new BufferedImage[]{
+                        ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/Interface/Icons/bombsim-logo-16.png"))),
+                        ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/Interface/Icons/bombsim-logo-32.png"))),
+                        ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/Interface/Icons/bombsim-logo-64.png"))),
+                        ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/Interface/Icons/bombsim-logo-128.png")))
+                };
+                SETTINGS.setIcons(icons);
+            } catch (Exception e) {
+                log.error("Error to setup app icons: ", e);
+            }
+        }
     }
 
     public static AppSettings getSettings() {

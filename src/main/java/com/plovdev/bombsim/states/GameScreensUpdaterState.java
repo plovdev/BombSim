@@ -16,6 +16,9 @@ import org.plovdev.eda.reflect.Subscribe;
 
 public class GameScreensUpdaterState extends BaseAppState {
     private static final String BTM_KEY = "BackToMenu";
+    private static final float FADE_OUT_DURATION = 1f;
+    private static final float FADE_IN_DURATION = 2.5f;
+
     private final ActionListener btmListener = (name, isPressed, tpf) -> {
         if (!isEnabled()) return;
         if (isPressed) {
@@ -54,7 +57,7 @@ public class GameScreensUpdaterState extends BaseAppState {
     @Subscribe(channel = GlobalEventManager.GAME_STATE_EVENT)
     private void onGameStateChanged(@NonNull GameStateEvent event) {
         if (event.getGameState() == GameStateEvent.GameState.GAME) {
-            fadeFilter.setDuration(1);
+            fadeFilter.setDuration(FADE_OUT_DURATION);
             fadeFilter.fadeOut();
             nifty.gotoScreen("empty");
             fadeStep = FadeUpdateStep.UPDATE_STATES_TO_GAME;
@@ -86,7 +89,7 @@ public class GameScreensUpdaterState extends BaseAppState {
             timer += tpf;
             if (timer >= fadeFilter.getDuration()) {
                 timer = 0;
-                fadeFilter.setDuration(2.5f);
+                fadeFilter.setDuration(FADE_IN_DURATION);
                 fadeFilter.fadeIn();
                 menuAppState.setEnabled(false);
                 gameAppState.setEnabled(true);
