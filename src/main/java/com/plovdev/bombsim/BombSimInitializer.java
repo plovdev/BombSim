@@ -44,6 +44,7 @@ public class BombSimInitializer {
 
         nifty.registerScreenController(new MenuScreenControl(application), new MainScreenControl(), new SettingsScreenControl());
         nifty.addXml("assets/Interface/screens/settings.xml");
+        nifty.addXml("assets/Interface/screens/authors.xml");
         nifty.addXml("assets/Interface/screens/empty.xml");
         nifty.addXml("assets/Interface/screens/menu.xml");
         nifty.addXml("assets/Interface/screens/main.xml");

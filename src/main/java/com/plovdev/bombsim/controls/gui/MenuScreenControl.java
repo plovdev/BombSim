@@ -20,7 +20,7 @@ public class MenuScreenControl extends BaseScreenController {
     }
 
     public void showAuthors() {
-
+        nifty.gotoScreen("authors");
     }
 
     public void exitGame() {
