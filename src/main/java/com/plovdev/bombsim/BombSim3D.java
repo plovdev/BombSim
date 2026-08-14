@@ -1,11 +1,9 @@
 package com.plovdev.bombsim;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.FadeFilter;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.plovdev.bombsim.controls.BombControl;
@@ -15,16 +13,19 @@ import com.plovdev.bombsim.controls.gui.SettingsScreenControl;
 import com.plovdev.bombsim.events.EventManager;
 import com.plovdev.bombsim.events.impls.BombModel;
 import com.plovdev.bombsim.events.impls.ModelChangeEventListener;
+import com.plovdev.bombsim.states.EventsAppState;
 import com.plovdev.bombsim.states.GameAppState;
 import com.plovdev.bombsim.states.MenuAppState;
 import com.plovdev.bombsim.utils.PreferencesStorage;
+import com.plovdev.bombsim.utils.Utils;
 import de.lessvoid.nifty.Nifty;
-import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BombSim3D extends SimpleApplication {
-    private final Logger log = LoggerFactory.getLogger(BombSim3D.class);
+    private static final Logger log = LoggerFactory.getLogger(BombSim3D.class);
+
+    private final FadeFilter statesFade = new FadeFilter(1);
     private Nifty nifty;
     private NiftyJmeDisplay display;
     private Node bombModel;
@@ -41,6 +42,7 @@ public class BombSim3D extends SimpleApplication {
     public void simpleInitApp() {
         // Init world
         fpp = new FilterPostProcessor(assetManager);
+        fpp.addFilter(statesFade);
         viewPort.addProcessor(fpp);
         BombSimInitializer.init(this, fpp);
 
@@ -55,7 +57,7 @@ public class BombSim3D extends SimpleApplication {
 
         // Init Model
         reattachBomb(PreferencesStorage.get("current-model", "assets/Models/Bomb-yellow_SCREEN.glb"));
-        prepareModel(bombModel);
+        Utils.prepareModel(bombModel);
         EventManager.getInstance().subscribe(new ModelChangeEventListener(e -> {
             if (e instanceof BombModel model) {
                 reattachBomb(model.getPath());
@@ -69,18 +71,7 @@ public class BombSim3D extends SimpleApplication {
 
         stateManager.attach(menuAppState);
         stateManager.attach(gameAppState);
-
-        // Init listeners
-        inputManager.deleteMapping(SimpleApplication.INPUT_MAPPING_EXIT);
-        inputManager.addMapping("BackToMenu", new KeyTrigger(KeyInput.KEY_ESCAPE));
-        inputManager.addListener((ActionListener) (name, isPressed, tpf) -> {
-            if (isPressed) {
-                if (gameAppState.isEnabled()) {
-                    gameAppState.setEnabled(false);
-                    menuAppState.setEnabled(true);
-                }
-            }
-        }, "BackToMenu");
+        stateManager.attach(new EventsAppState());
     }
 
     private void reattachBomb(String path) {
@@ -94,20 +85,7 @@ public class BombSim3D extends SimpleApplication {
                 rootNode.attachChild(bombModel);
             }
         } catch (Exception e) {
-            log.error("Ошибка загрузки модели: {}", path, e);
+            log.error("Error to load bomb model: {}", path, e);
         }
-    }
-
-    private void prepareModel(@NonNull Node bomb) {
-        bomb.depthFirstTraversal(s -> {
-            String name = s.getName();
-            if (name == null) {
-                return;
-            }
-            if (name.startsWith("Button")) {
-                if (name.contains("ButtonsPane")) return;
-                s.setUserData("Number", name.substring(6).replace("_0", "").replace("Node", ""));
-            }
-        });
     }
 }

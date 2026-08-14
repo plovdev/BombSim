@@ -15,14 +15,12 @@ import com.jme3.scene.Node;
 import com.plovdev.bombsim.audio.AudioPlayerUtils;
 import org.jspecify.annotations.NonNull;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class BombSimInitializer {
     private BombSimInitializer() {
     }
 
     public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp) {
+        application.getInputManager().deleteMapping(SimpleApplication.INPUT_MAPPING_EXIT);
         Node root = application.getRootNode();
         AssetManager assetManager = application.getAssetManager();
 
@@ -86,8 +84,8 @@ public class BombSimInitializer {
         emitter.setFacingVelocity(true);
         emitter.setStartSize(0.08f);
         emitter.setEndSize(0.08f);
-        emitter.setLowLife(5);
-        emitter.setHighLife(8);
+        emitter.setLowLife(7);
+        emitter.setHighLife(10);
 
         node.attachChild(emitter);
     }

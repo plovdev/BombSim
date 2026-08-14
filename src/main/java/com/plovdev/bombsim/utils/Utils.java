@@ -1,5 +1,6 @@
 package com.plovdev.bombsim.utils;
 
+import com.jme3.scene.Node;
 import com.plovdev.bombsim.Main;
 import com.plovdev.bombsim.browser.BrowserOpener;
 import org.jspecify.annotations.NonNull;
@@ -44,5 +45,18 @@ public class Utils {
             log.error("Error to unpack help document: ", e);
             throw new RuntimeException("Can't unpack help doc: " + e.getMessage());
         }
+    }
+
+    public static void prepareModel(@NonNull Node bomb) {
+        bomb.depthFirstTraversal(s -> {
+            String name = s.getName();
+            if (name == null) {
+                return;
+            }
+            if (name.startsWith("Button")) {
+                if (name.contains("ButtonsPane")) return;
+                s.setUserData("Number", name.substring(6).replace("_0", "").replace("Node", ""));
+            }
+        });
     }
 }
