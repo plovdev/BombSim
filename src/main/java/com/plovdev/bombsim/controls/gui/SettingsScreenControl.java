@@ -1,8 +1,8 @@
 package com.plovdev.bombsim.controls.gui;
 
-public class SettingsScreenControl extends BaseScreenConctroller {
+public class SettingsScreenControl extends BaseScreenController {
     public void back() {
-        nifty.gotoScreen("main");
+        nifty.gotoScreen(getLastScreen());
     }
 
     @Override

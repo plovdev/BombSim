@@ -8,7 +8,7 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MenuScreenControl extends BaseScreenConctroller {
+public class MenuScreenControl extends BaseScreenController {
     private static final Logger log = LoggerFactory.getLogger(MenuScreenControl.class);
     private final SimpleApplication application;
     private final AppStateManager stateManager;
@@ -31,13 +31,14 @@ public class MenuScreenControl extends BaseScreenConctroller {
     }
 
     public void exitGame() {
-        log.info("Exitin from game...");
+        log.info("Exiting from game...");
         application.stop(true);
         System.exit(0);
     }
 
     @Override
     public void onStartScreen() {
+        putScreen(screen.getScreenId());
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.jme3.system.AppSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.prefs.BackingStoreException;
+
 public final class PreferencesStorage {
     private static final Logger log = LoggerFactory.getLogger(PreferencesStorage.class);
 
@@ -15,9 +17,8 @@ public final class PreferencesStorage {
     static {
         try {
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
-            if (!SETTINGS.getBoolean("was-inited", false)) {
+            if (!SETTINGS.getBoolean("was-init", false)) {
                 loadDefault();
-                SETTINGS.save(PREFS_KEY);
             } else {
                 SETTINGS.load(PREFS_KEY);
             }
@@ -25,6 +26,14 @@ public final class PreferencesStorage {
             log.error("Settings loading error: ", e);
             loadDefault();
         }
+
+        Globals.addShutdownHook(() -> {
+            try {
+                SETTINGS.save(PREFS_KEY);
+            } catch (BackingStoreException e) {
+                log.error("Error to save preferences: ", e);
+            }
+        });
     }
 
     private static void loadDefault() {

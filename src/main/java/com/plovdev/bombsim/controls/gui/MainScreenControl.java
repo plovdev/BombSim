@@ -1,9 +1,9 @@
 package com.plovdev.bombsim.controls.gui;
 
-public class MainScreenControl extends BaseScreenConctroller {
+public class MainScreenControl extends BaseScreenController {
     @Override
     public void onStartScreen() {
-        System.out.println("Start screen");
+        putScreen(screen.getScreenId());
     }
 
     @Override
