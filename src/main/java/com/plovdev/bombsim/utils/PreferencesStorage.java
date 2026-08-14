@@ -5,27 +5,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class PreferencesStorage {
-    private static final AppSettings SETTINGS = new AppSettings(true);
     private static final Logger log = LoggerFactory.getLogger(PreferencesStorage.class);
+
+    private static final AppSettings SETTINGS = new AppSettings(true);
+    private static final String PREFS_KEY = "BombSim";
+    public static final String ROTATE_SENSENSITIVITY = "rotate_sens";
+    public static final String ZOOM_SENSENSITIVITY = "zoom_sens";
 
     static {
         try {
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
-            SETTINGS.load("BombSim");
+            if (!SETTINGS.getBoolean("was-inited", false)) {
+                loadDefault();
+                SETTINGS.save(PREFS_KEY);
+            } else {
+                SETTINGS.load(PREFS_KEY);
+            }
         } catch (Exception e) {
             log.error("Settings loading error: ", e);
-            SETTINGS.setTitle("BombSim 3");
-            SETTINGS.setGammaCorrection(true);
-            SETTINGS.setVSync(true);
-            SETTINGS.setSamples(2);
-            SETTINGS.setResizable(true);
-            SETTINGS.setWindowSize(700, 720);
-            SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);
+            loadDefault();
         }
     }
 
-    public static final String ROTATE_SENSENSITIVITY = "rotate_sens";
-    public static final String ZOOM_SENSENSITIVITY = "zoom_sens";
+    private static void loadDefault() {
+        SETTINGS.setTitle("BombSim 3");
+        SETTINGS.setGammaCorrection(true);
+        SETTINGS.setVSync(true);
+        SETTINGS.setSamples(2);
+        SETTINGS.setResizable(true);
+        SETTINGS.setWindowSize(700, 720);
+        SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);
+    }
 
     private PreferencesStorage() {
     }
