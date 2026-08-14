@@ -40,16 +40,12 @@
 
         <jme.version>3.9.0-stable</jme.version>
         <logback.version>1.5.32</logback.version>
+        <eda.version>1.1</eda.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jb-annos.version>26.0.2</jb-annos.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-core</artifactId>
-            <version>${jme.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.jmonkeyengine</groupId>
             <artifactId>jme3-plugins</artifactId>
@@ -85,6 +81,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.plovdev</groupId>
+            <artifactId>eda</artifactId>
+            <version>${eda.version}</version>
         </dependency>
 
         <dependency>

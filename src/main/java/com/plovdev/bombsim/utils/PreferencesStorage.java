@@ -18,6 +18,7 @@ public final class PreferencesStorage {
         try {
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
             if (!SETTINGS.getBoolean("was-init", false)) {
+                //SETTINGS.putBoolean("was-init", true);
                 loadDefault();
             } else {
                 SETTINGS.load(PREFS_KEY);
@@ -26,21 +27,21 @@ public final class PreferencesStorage {
             log.error("Settings loading error: ", e);
             loadDefault();
         }
+    }
 
-        Globals.addShutdownHook(() -> {
-            try {
-                SETTINGS.save(PREFS_KEY);
-            } catch (BackingStoreException e) {
-                log.error("Error to save preferences: ", e);
-            }
-        });
+    public static void savePreferences() {
+        try {
+            SETTINGS.save(PREFS_KEY);
+        } catch (BackingStoreException e) {
+            log.error("Error to save preferences: ", e);
+        }
     }
 
     private static void loadDefault() {
         SETTINGS.setTitle("BombSim 3");
         SETTINGS.setGammaCorrection(true);
         SETTINGS.setVSync(true);
-        SETTINGS.setSamples(2);
+        SETTINGS.setSamples(4);
         SETTINGS.setResizable(true);
         SETTINGS.setWindowSize(700, 720);
         SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);

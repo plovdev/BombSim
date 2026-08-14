@@ -13,13 +13,17 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Node;
 import com.plovdev.bombsim.audio.AudioPlayerUtils;
+import com.plovdev.bombsim.controls.gui.MainScreenControl;
+import com.plovdev.bombsim.controls.gui.MenuScreenControl;
+import com.plovdev.bombsim.controls.gui.SettingsScreenControl;
+import de.lessvoid.nifty.Nifty;
 import org.jspecify.annotations.NonNull;
 
 public class BombSimInitializer {
     private BombSimInitializer() {
     }
 
-    public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp) {
+    public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp, @NonNull Nifty nifty) {
         application.getInputManager().deleteMapping(SimpleApplication.INPUT_MAPPING_EXIT);
         Node root = application.getRootNode();
         AssetManager assetManager = application.getAssetManager();
@@ -37,6 +41,12 @@ public class BombSimInitializer {
         createSparkEmitter(new Vector3f(-6.5f, -7.5f, 0f), root, assetManager, "BombSpark3");
         createSparkEmitter(new Vector3f(6.5f, -7.5f, 0f), root, assetManager, "BombSpark4");
         createSparkEmitter(new Vector3f(-6.5f, 7.5f, 0f), root, assetManager, "BombSpark4");
+
+        nifty.registerScreenController(new MenuScreenControl(application), new MainScreenControl(), new SettingsScreenControl());
+        nifty.addXml("assets/Interface/screens/settings.xml");
+        nifty.addXml("assets/Interface/screens/empty.xml");
+        nifty.addXml("assets/Interface/screens/menu.xml");
+        nifty.addXml("assets/Interface/screens/main.xml");
 
         AudioPlayerUtils.play(assetManager, root, null, null, "assets/Sounds/bomb-playback.wav", AudioData.DataType.Stream, true).setVolume(0.2f);
     }

@@ -1,9 +1,8 @@
 package com.plovdev.bombsim.controls.gui;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AppStateManager;
-import com.plovdev.bombsim.states.GameAppState;
-import com.plovdev.bombsim.states.MenuAppState;
+import com.plovdev.bombsim.events.GameStateEvent;
+import com.plovdev.bombsim.events.GlobalEventManager;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,19 +10,13 @@ import org.slf4j.LoggerFactory;
 public class MenuScreenControl extends BaseScreenController {
     private static final Logger log = LoggerFactory.getLogger(MenuScreenControl.class);
     private final SimpleApplication application;
-    private final AppStateManager stateManager;
 
     public MenuScreenControl(@NonNull SimpleApplication application) {
         this.application = application;
-        this.stateManager = application.getStateManager();
     }
 
     public void newGame() {
-        MenuAppState menuState = stateManager.getState(MenuAppState.class);
-        GameAppState gameState = stateManager.getState(GameAppState.class);
-
-        menuState.setEnabled(false);
-        gameState.setEnabled(true);
+        GlobalEventManager.broadcastEvent(new GameStateEvent(GameStateEvent.GameState.GAME));
     }
 
     public void showAuthors() {

@@ -7,13 +7,11 @@ import com.jme3.post.filters.FadeFilter;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.plovdev.bombsim.controls.BombControl;
-import com.plovdev.bombsim.controls.gui.MainScreenControl;
-import com.plovdev.bombsim.controls.gui.MenuScreenControl;
-import com.plovdev.bombsim.controls.gui.SettingsScreenControl;
 import com.plovdev.bombsim.events.EventManager;
+import com.plovdev.bombsim.events.GlobalEventManager;
 import com.plovdev.bombsim.events.impls.BombModel;
 import com.plovdev.bombsim.events.impls.ModelChangeEventListener;
-import com.plovdev.bombsim.states.EventsAppState;
+import com.plovdev.bombsim.states.GameScreensUpdaterState;
 import com.plovdev.bombsim.states.GameAppState;
 import com.plovdev.bombsim.states.MenuAppState;
 import com.plovdev.bombsim.utils.PreferencesStorage;
@@ -44,16 +42,11 @@ public class BombSim3D extends SimpleApplication {
         fpp = new FilterPostProcessor(assetManager);
         fpp.addFilter(statesFade);
         viewPort.addProcessor(fpp);
-        BombSimInitializer.init(this, fpp);
 
-        // Init GUI
         display = NiftyJmeDisplay.newNiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         nifty = display.getNifty();
-        nifty.registerScreenController(new MenuScreenControl(this), new MainScreenControl(), new SettingsScreenControl());
-        nifty.addXml("assets/Interface/screens/menu.xml");
-        nifty.addXml("assets/Interface/screens/main.xml");
-        nifty.addXml("assets/Interface/screens/settings.xml");
         guiViewPort.addProcessor(display);
+        BombSimInitializer.init(this, fpp, nifty);
 
         // Init Model
         reattachBomb(PreferencesStorage.get("current-model", "assets/Models/Bomb-yellow_SCREEN.glb"));
@@ -71,7 +64,10 @@ public class BombSim3D extends SimpleApplication {
 
         stateManager.attach(menuAppState);
         stateManager.attach(gameAppState);
-        stateManager.attach(new EventsAppState());
+
+        GameScreensUpdaterState gameScreensUpdaterState = new GameScreensUpdaterState(nifty, statesFade);
+        GlobalEventManager.registerListener(gameScreensUpdaterState);
+        stateManager.attach(gameScreensUpdaterState);
     }
 
     private void reattachBomb(String path) {
@@ -87,5 +83,11 @@ public class BombSim3D extends SimpleApplication {
         } catch (Exception e) {
             log.error("Error to load bomb model: {}", path, e);
         }
+    }
+
+    @Override
+    public void destroy() {
+        PreferencesStorage.savePreferences();
+        super.destroy();
     }
 }

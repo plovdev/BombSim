@@ -62,7 +62,7 @@ public class GameAppState extends BaseAppState {
         if (bombControl != null && bombNode != null) {
             bombNode.removeControl(bombControl);
             nifty.gotoScreen("menu");
-            log.info("BombNode deattached from the bomb");
+            log.info("BombControl removed from the bomb");
         }
     }
 }
