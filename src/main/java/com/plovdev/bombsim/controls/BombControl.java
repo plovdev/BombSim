@@ -9,7 +9,10 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.*;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -18,11 +21,10 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.plovdev.bombsim.audio.AudioManager;
-import com.plovdev.bombsim.utils.PreferencesStorage;
 import com.plovdev.bombsim.events.EventManager;
 import com.plovdev.bombsim.events.impls.Sensitivity;
-import com.plovdev.bombsim.events.impls.SensitivityChangeEventLitener;
-import com.plovdev.bombsim.utils.Utils;
+import com.plovdev.bombsim.events.impls.SensitivityChangeListener;
+import com.plovdev.bombsim.utils.PreferencesStorage;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +41,20 @@ public class BombControl extends AbstractControl {
     private boolean rotating = false;
     private boolean dragging = false;
     private boolean buttonPressed = false;
+    private String bombText;
+    private Quaternion bombRotation;
+
     private final AudioManager audioManager;
     private final BombTextControl textControl;
-
     private final Camera cam;
+
     private float rotateSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ROTATE_SENSENSITIVITY, 0.005f);
     private float zoomSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ZOOM_SENSENSITIVITY, 0.25f);
+
+    private final CollisionResults results = new CollisionResults();
+    private final Ray clickRay = new Ray();
+    private final Vector3f clickPosition = new Vector3f();
+    private final Vector3f clickDirection = new Vector3f();
 
     public BombControl(InputManager im, AssetManager assetManager, Camera c) {
         this.audioManager = new AudioManager(assetManager);
@@ -52,15 +62,11 @@ public class BombControl extends AbstractControl {
         this.inputManager = im;
         this.cam = c;
 
-        EventManager.getInstance().subscribe(new SensitivityChangeEventLitener(e -> {
+        EventManager.getInstance().subscribe(new SensitivityChangeListener(e -> {
             if (e instanceof Sensitivity sens) {
                 switch (sens.getType()) {
-                    case Sensitivity.ROTATE:
-                        this.rotateSensitivity = sens.getSensitivity();
-                        break;
-                    case Sensitivity.ZOOM:
-                        this.zoomSensitivity = sens.getSensitivity();
-                        break;
+                    case Sensitivity.ROTATE -> this.rotateSensitivity = sens.getSensitivity();
+                    case Sensitivity.ZOOM -> this.zoomSensitivity = sens.getSensitivity();
                 }
             }
         }));
@@ -77,8 +83,9 @@ public class BombControl extends AbstractControl {
                     rotating = b;
                     buttonPressed = b;
                     if (rotating) {
-                        lastX = inputManager.getCursorPosition().x;
-                        lastY = inputManager.getCursorPosition().y;
+                        Vector2f cursor = inputManager.getCursorPosition();
+                        lastX = cursor.x;
+                        lastY = cursor.y;
                     }
                     break;
                 case "Drag":
@@ -107,6 +114,8 @@ public class BombControl extends AbstractControl {
         if (spatial != null) {
             bombModel = (Node) spatial;
             bombModel.addControl(textControl);
+            bombText = "";
+            bombRotation = new Quaternion().fromAngles(0, 0, 0);
             updateCamera();
         }
     }
@@ -115,47 +124,75 @@ public class BombControl extends AbstractControl {
         if (bombModel == null) return;
 
         Vector3f bombPos = bombModel.getLocalTranslation();
-        Vector3f camPos = new Vector3f(bombPos.x, bombPos.y, bombPos.z + distance);
+        Vector3f camPos = new Vector3f(0, 0, distance);
         cam.setLocation(camPos);
         cam.lookAt(bombPos, Vector3f.UNIT_Y);
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (enabled) {
+            textControl.updateController(bombText);
+            bombModel.setLocalRotation(bombRotation);
+        } else {
+            bombText = textControl.getChars();
+            textControl.clear();
+            if (bombModel != null) {
+                bombRotation = bombModel.getLocalRotation();
+                bombModel.setLocalRotation(Quaternion.IDENTITY);
+            }
+        }
+    }
+
+    @Override
     protected void controlUpdate(float v) {
-        if (bombModel == null || inputManager == null || cam == null) return;
+        if (!isEnabled() || bombModel == null || inputManager == null || cam == null) return;
 
         if (buttonPressed) {
             buttonPressed = false;
             try {
-                CollisionResults results = new CollisionResults();
+                results.clear();
                 Vector2f click = inputManager.getCursorPosition();
-                Vector3f clickPosition = cam.getWorldCoordinates(new Vector2f(click.x, click.y), 15f);
-                Vector3f clickDirection = cam.getWorldCoordinates(new Vector2f(click.x, click.y), 100).subtractLocal(clickPosition);
-                Ray clickRay = new Ray(clickPosition, clickDirection);
+
+                cam.getWorldCoordinates(click, 0f, clickPosition);
+                cam.getWorldCoordinates(click, 1f, clickDirection);
+                clickDirection.subtractLocal(clickPosition).normalizeLocal();
+
+                clickRay.setOrigin(clickPosition);
+                clickRay.setDirection(clickDirection);
 
                 bombModel.getParent().collideWith(clickRay, results);
                 if (results.size() > 0) {
                     Geometry clicked = results.getClosestCollision().getGeometry();
-                    String name = clicked.getName().replaceAll("_\\d+", "");
-                    if (name.matches("Button([\\d+]|[#|*])")) {
-                        handleClick(bombModel.getChild(name + "Node"));
+
+                    String name = clicked.getName();
+                    if (name.startsWith("Button")) {
+                        String cleanName = name.split("_")[0];
+                        Spatial buttonNode = bombModel.getChild(cleanName + "Node");
+                        if (buttonNode != null) {
+                            handleClick(buttonNode);
+                        }
                     }
                 }
             } catch (Exception e) {
-                log.error("Click handling error: ", e);
+                log.error("Error handling click event: ", e);
             }
         }
 
         if (rotating) {
-            float x = inputManager.getCursorPosition().x;
-            float y = inputManager.getCursorPosition().y;
+            Vector2f cursor = inputManager.getCursorPosition();
+            float x = cursor.x;
+            float y = cursor.y;
 
             float dx = x - lastX;
             float dy = y - lastY;
 
             rotationY += dx * rotateSensitivity;
             rotationX += dy * rotateSensitivity;
-            bombModel.setLocalRotation(new Quaternion().fromAngles(-rotationX, rotationY, 0));
+
+            bombRotation.fromAngles(-rotationX, rotationY, 0);
+            bombModel.setLocalRotation(bombRotation);
 
             lastX = x;
             lastY = y;
@@ -164,11 +201,15 @@ public class BombControl extends AbstractControl {
 
     private void handleClick(@NonNull Spatial clicked) {
         String num = clicked.getUserData("Number");
+        if (num == null) return;
+
         AnimComposer composer = clicked.getControl(AnimComposer.class);
-        composer.setCurrentAction("Press" + num, AnimComposer.DEFAULT_LAYER, false);
+        if (composer != null) {
+            composer.setCurrentAction("Press" + num, AnimComposer.DEFAULT_LAYER, false);
+        }
 
         String inputText = textControl.getChars();
-        notifyTextUpdate(num);
+        textControl.updateController(num);
         audioManager.playButtonPress(clicked);
 
         if (num.equals("*") || num.equals("#")) {
@@ -176,22 +217,19 @@ public class BombControl extends AbstractControl {
             textControl.clear();
             if (inputText.equals(password)) {
                 if (num.equals("*")) {
-                    //TODO: plant bomb
+                    log.info("Bomb planting initiated.");
+                    // TODO: plant bomb
                 } else {
-                    //TODO: diffuse bomb
+                    log.info("Bomb defusal initiated.");
+                    // TODO: diffuse bomb
                 }
             } else {
-                log.warn("Error password {}", inputText);
-                Utils.showPasswordErrorDialoge();
+                log.warn("Incorrect password entered: {}", inputText);
             }
         }
     }
 
-    private void notifyTextUpdate(String text) {
-        textControl.updateController(text);
-    }
-
     @Override
-    protected void controlRender(RenderManager renderManager, ViewPort viewPort) {
+    protected void controlRender(RenderManager rm, ViewPort vp) {
     }
 }

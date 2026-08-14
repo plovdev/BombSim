@@ -34,6 +34,8 @@ public class GameAppState extends BaseAppState {
         Camera camera = application.getCamera();
 
         this.bombControl = new BombControl(inputManager, assetManager, camera);
+        bombControl.setEnabled(false);
+        bombNode.addControl(bombControl);
     }
 
     @Override
@@ -47,20 +49,16 @@ public class GameAppState extends BaseAppState {
     @Override
     protected void onEnable() {
         if (bombControl != null && bombNode != null) {
-            if (bombNode.getControl(BombControl.class) == null) {
-                nifty.gotoScreen("main");
-                bombNode.addControl(bombControl);
-                log.info("BombControl attached to the bomb");
-            } else {
-                log.warn("BombControl already has been attached");
-            }
+            nifty.gotoScreen("main");
+            bombControl.setEnabled(true);
+            log.info("BombControl attached to the bomb");
         }
     }
 
     @Override
     protected void onDisable() {
         if (bombControl != null && bombNode != null) {
-            bombNode.removeControl(bombControl);
+            bombControl.setEnabled(false);
             nifty.gotoScreen("menu");
             log.info("BombControl removed from the bomb");
         }

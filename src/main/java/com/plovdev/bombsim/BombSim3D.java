@@ -58,7 +58,7 @@ public class BombSim3D extends SimpleApplication {
         }));
 
         // Init states
-        menuAppState = new MenuAppState(nifty);
+        menuAppState = new MenuAppState(bombModel, nifty);
         gameAppState = new GameAppState(bombModel, nifty);
         gameAppState.setEnabled(false);
 

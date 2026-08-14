@@ -5,9 +5,9 @@ import com.plovdev.bombsim.events.ChannelType;
 import com.plovdev.bombsim.events.Event;
 import com.plovdev.bombsim.events.EventListener;
 
-public class SensitivityChangeEventLitener implements EventListener {
+public class SensitivityChangeListener implements EventListener {
     private Event event;
-    public SensitivityChangeEventLitener(Event e) {
+    public SensitivityChangeListener(Event e) {
         event = e;
     }
 
