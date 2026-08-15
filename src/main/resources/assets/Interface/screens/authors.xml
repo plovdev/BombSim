@@ -36,6 +36,11 @@
                     </panel>
                 </control>
 
+                <panel id="jme-text" width="100%" height="40px" childLayout="center">
+                    <panel id="jme-text-in" width="20%" height="40px" childLayout="horizontal">
+                        <text font="aurulent-sans-16.fnt" color="#4d4c4b" text="Developed on JMonkeyEngineV3.9 3D Engine" align="center" valign="center" width="100%" height="100%"/>
+                    </panel>
+                </panel>
                 <panel id="links-block-out" width="100%" height="40px" childLayout="center" backgroundColor="#222f">
                     <panel id="links-block-in" width="30%" height="40px" childLayout="horizontal">
                         <image filename="assets/Interface/Icons/Authors/github.png" valign="center" width="30px"

@@ -167,6 +167,7 @@
                             </filters>
                             <createSourcesJar>false</createSourcesJar>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <outputDirectory>.</outputDirectory>
                             <minimizeJar>false</minimizeJar>
                             <finalName>BombSim</finalName>
                         </configuration>
