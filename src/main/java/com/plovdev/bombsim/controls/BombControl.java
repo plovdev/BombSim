@@ -69,6 +69,7 @@ public class BombControl extends AbstractControl {
         inputManager.addMapping("ZoomOut", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
 
         inputManager.addListener((ActionListener) (s, b, v) -> {
+            if (!isEnabled()) return;
             switch (s) {
                 case "Rotate":
                     rotating = b;
@@ -86,6 +87,7 @@ public class BombControl extends AbstractControl {
         }, "Rotate", "Drag");
 
         inputManager.addListener((AnalogListener) (s, b, v) -> {
+            if (!isEnabled()) return;
             if (s.equals("ZoomIn")) {
                 updateDistance(distance - zoomSensitivity);
                 updateCamera();
@@ -135,6 +137,7 @@ public class BombControl extends AbstractControl {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+
         if (enabled) {
             textControl.updateController(bombText);
             bombModel.setLocalRotation(bombRotation);

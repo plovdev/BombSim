@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public class GameAppState extends BaseAppState {
     private static final Logger log = LoggerFactory.getLogger(GameAppState.class);
 
+    private SimpleApplication application;
     private BombControl bombControl;
     private final Node bombNode;
     private final Nifty nifty;
@@ -27,7 +28,7 @@ public class GameAppState extends BaseAppState {
 
     @Override
     protected void initialize(@NonNull Application app) {
-        SimpleApplication application = (SimpleApplication) app;
+        this.application = (SimpleApplication) app;
 
         InputManager inputManager = application.getInputManager();
         AssetManager assetManager = application.getAssetManager();
@@ -49,17 +50,21 @@ public class GameAppState extends BaseAppState {
     @Override
     protected void onEnable() {
         if (bombControl != null && bombNode != null) {
-            nifty.gotoScreen("main");
-            bombControl.setEnabled(true);
-            log.info("BombControl attached to the bomb");
+            application.enqueue(() -> {
+                nifty.gotoScreen("main");
+                bombControl.setEnabled(true);
+                log.info("BombControl attached to the bomb");
+            });
         }
     }
 
     @Override
     protected void onDisable() {
         if (bombControl != null && bombNode != null) {
-            bombControl.setEnabled(false);
-            log.info("BombControl removed from the bomb");
+            application.enqueue(() -> {
+                bombControl.setEnabled(false);
+                log.info("BombControl removed from the bomb");
+            });
         }
     }
 }

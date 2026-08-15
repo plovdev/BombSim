@@ -39,13 +39,15 @@ public class MenuAppState extends BaseAppState {
 
     @Override
     protected void onEnable() {
-        nifty.gotoScreen("menu");
-        application.enqueue(() -> bombNode.setLocalRotation(new Quaternion().fromAngles(0, 0, 0)));
+        application.enqueue(() -> {
+            nifty.gotoScreen("menu");
+            application.enqueue(() -> bombNode.setLocalRotation(new Quaternion().fromAngles(0, 0, 0)));
+        });
     }
 
     @Override
     protected void onDisable() {
-        updateCameraPosition(0);
+        application.enqueue(() -> updateCameraPosition(0));
     }
 
     @Override

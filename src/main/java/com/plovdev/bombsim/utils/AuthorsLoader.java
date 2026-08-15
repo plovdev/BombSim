@@ -14,7 +14,7 @@ public final class AuthorsLoader {
     public static @NonNull List<Author> loadAllAuthors() {
         List<Author> authors = new ArrayList<>();
         authors.add(createAuthor("plov", "Anton Pavlov", "Lead Developer"));
-        authors.add(createAuthor("arsen", "Artem Boyko", "Lead Designer, 3D"));
+        authors.add(createAuthor("arsen", "Artem Boyko (Arsen 512)", "Lead Designer, 3D"));
         authors.add(createAuthor("onetwoz", "OneTwoZ Dev", "Helps Developer"));
         authors.add(createAuthor("matfey", "Mat Fey", "QA Engineer"));
 
