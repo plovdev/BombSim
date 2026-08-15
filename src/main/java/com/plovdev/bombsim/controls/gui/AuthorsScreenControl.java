@@ -31,9 +31,9 @@ public class AuthorsScreenControl extends BaseScreenController {
                 childLayout(ChildLayoutType.Horizontal);
                 width("100%");
                 height("80px");
-                marginBottom("10px");
+                marginBottom("60px");
                 backgroundColor("#333f");
-                padding("5px");
+                padding("7px");
 
                 image(new ImageBuilder() {{
                     filename(avatarPath);

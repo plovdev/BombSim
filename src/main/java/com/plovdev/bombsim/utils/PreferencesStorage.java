@@ -17,8 +17,8 @@ public final class PreferencesStorage {
 
     private static final AppSettings SETTINGS = new AppSettings(true);
     private static final String PREFS_KEY = "BombSim";
-    public static final String ROTATE_SENSENSITIVITY = "rotate_sens";
-    public static final String ZOOM_SENSENSITIVITY = "zoom_sens";
+    public static final String ROTATE_SENSITIVITY = "rotate_sens";
+    public static final String ZOOM_SENSITIVITY = "zoom_sens";
 
     static {
         try {

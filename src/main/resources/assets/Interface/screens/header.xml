@@ -3,12 +3,12 @@
     <controlDefinition name="header">
         <panel childLayout="center" width="100%" height="35px" valign="top">
             <panel childLayout="center" width="35px" height="35px" align="right" valign="top">
-                <image filename="assets/Interface/gear.png" width="30px" height="30px">
+                <image filename="assets/Interface/Icons/gear.png" width="30px" height="30px">
                     <interact onClick="onSettingsClicked()"/>
                 </image>
             </panel>
             <panel childLayout="center" width="35px" height="35px" align="left" valign="top">
-                <image filename="assets/Interface/help.png" width="25px" height="25px">
+                <image filename="assets/Interface/Icons/help.png" width="25px" height="25px">
                     <interact onClick="onHelpClicked()"/>
                 </image>
             </panel>

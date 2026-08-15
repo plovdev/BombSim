@@ -59,7 +59,6 @@ public class GameAppState extends BaseAppState {
     protected void onDisable() {
         if (bombControl != null && bombNode != null) {
             bombControl.setEnabled(false);
-            nifty.gotoScreen("menu");
             log.info("BombControl removed from the bomb");
         }
     }

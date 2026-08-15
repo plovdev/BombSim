@@ -48,8 +48,8 @@ public class BombControl extends AbstractControl {
     private final BombTextControl textControl;
     private final Camera cam;
 
-    private float rotateSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ROTATE_SENSENSITIVITY, 0.005f);
-    private float zoomSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ZOOM_SENSENSITIVITY, 0.25f);
+    private float rotateSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ROTATE_SENSITIVITY, 0.005f);
+    private float zoomSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ZOOM_SENSITIVITY, 0.25f);
 
     private final CollisionResults results = new CollisionResults();
     private final Ray clickRay = new Ray();
