@@ -1,7 +1,7 @@
 package com.plovdev.bombsim.controls.gui;
 
 import com.jme3.app.SimpleApplication;
-import com.plovdev.bombsim.events.GameStateEvent;
+import com.plovdev.bombsim.events.GameStateChangeEvent;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ public class MenuScreenControl extends BaseScreenController {
     }
 
     public void newGame() {
-        GlobalEventManager.broadcastEvent(new GameStateEvent(GameStateEvent.GameState.GAME));
+        GlobalEventManager.broadcastEvent(new GameStateChangeEvent(GameStateChangeEvent.GameState.GAME));
     }
 
     public void showAuthors() {

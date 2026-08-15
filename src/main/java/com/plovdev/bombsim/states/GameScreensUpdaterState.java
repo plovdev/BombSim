@@ -8,7 +8,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.post.filters.FadeFilter;
-import com.plovdev.bombsim.events.GameStateEvent;
+import com.plovdev.bombsim.events.GameStateChangeEvent;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import de.lessvoid.nifty.Nifty;
 import org.jspecify.annotations.NonNull;
@@ -22,7 +22,7 @@ public class GameScreensUpdaterState extends BaseAppState {
     private final ActionListener btmListener = (name, isPressed, tpf) -> {
         if (!isEnabled()) return;
         if (isPressed) {
-            GlobalEventManager.broadcastEvent(new GameStateEvent(GameStateEvent.GameState.MENU));
+            GlobalEventManager.broadcastEvent(new GameStateChangeEvent(GameStateChangeEvent.GameState.MENU));
         }
     };
 
@@ -55,13 +55,13 @@ public class GameScreensUpdaterState extends BaseAppState {
     }
 
     @Subscribe(channel = GlobalEventManager.GAME_STATE_EVENT)
-    private void onGameStateChanged(@NonNull GameStateEvent event) {
-        if (event.getGameState() == GameStateEvent.GameState.GAME) {
+    private void onGameStateChanged(@NonNull GameStateChangeEvent event) {
+        if (event.getGameState() == GameStateChangeEvent.GameState.GAME) {
             fadeFilter.setDuration(FADE_OUT_DURATION);
             fadeFilter.fadeOut();
             nifty.gotoScreen("empty");
             fadeStep = FadeUpdateStep.UPDATE_STATES_TO_GAME;
-        } else if (event.getGameState() == GameStateEvent.GameState.MENU) {
+        } else if (event.getGameState() == GameStateChangeEvent.GameState.MENU) {
             gameAppState.setEnabled(false);
             menuAppState.setEnabled(true);
         }

@@ -22,6 +22,7 @@ public final class PreferencesStorage {
 
     static {
         try {
+            log.info("Init settings...");
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
             if (!SETTINGS.getBoolean("was-init", false)) {
                 SETTINGS.putBoolean("was-init", true);
@@ -61,6 +62,7 @@ public final class PreferencesStorage {
 
     private static void setupIcons() {
         if (JmeSystem.getPlatform().getOs() != Platform.Os.MacOS) {
+            log.info("Setuping icons");
             try {
                 BufferedImage[] icons = new BufferedImage[]{
                         ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/Interface/Icons/bombsim-logo-16.png"))),

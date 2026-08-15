@@ -18,30 +18,39 @@ import com.plovdev.bombsim.controls.gui.MenuScreenControl;
 import com.plovdev.bombsim.controls.gui.SettingsScreenControl;
 import de.lessvoid.nifty.Nifty;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BombSimInitializer {
+    private static final Logger log = LoggerFactory.getLogger(BombSimInitializer.class);
+
     private BombSimInitializer() {
     }
 
     public static void init(@NonNull SimpleApplication application, FilterPostProcessor fpp, @NonNull Nifty nifty) {
+        log.info("Initialize BombSim 3...");
+        log.info("Initialize base components");
+        application.getFlyByCamera().setEnabled(false);
+        application.setDisplayFps(false);
+        application.setDisplayStatView(false);
         application.getInputManager().deleteMapping(SimpleApplication.INPUT_MAPPING_EXIT);
+
         Node root = application.getRootNode();
         AssetManager assetManager = application.getAssetManager();
 
+        log.info("Setuping effects");
         addLight(root);
         applyFilters(fpp, root);
         initSky(assetManager, root);
 
-        application.getFlyByCamera().setEnabled(false);
-        application.setDisplayFps(false);
-        application.setDisplayStatView(false);
-
+        log.info("Creating sparks");
         createSparkEmitter(new Vector3f(0f, 0f, 0f), root, assetManager, "BombSpark1");
         createSparkEmitter(new Vector3f(6.5f, 7.5f, 0f), root, assetManager, "BombSpark2");
         createSparkEmitter(new Vector3f(-6.5f, -7.5f, 0f), root, assetManager, "BombSpark3");
         createSparkEmitter(new Vector3f(6.5f, -7.5f, 0f), root, assetManager, "BombSpark4");
         createSparkEmitter(new Vector3f(-6.5f, 7.5f, 0f), root, assetManager, "BombSpark4");
 
+        log.info("Loading UI");
         nifty.registerScreenController(new MenuScreenControl(application), new MainScreenControl(), new SettingsScreenControl());
         nifty.addXml("assets/Interface/screens/settings.xml");
         nifty.addXml("assets/Interface/screens/authors.xml");

@@ -12,8 +12,6 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
-import com.plovdev.bombsim.events.EventManager;
-import com.plovdev.bombsim.events.impls.BombTextChangedEventListener;
 import org.jspecify.annotations.NonNull;
 
 public class BombTextControl extends AbstractControl {
@@ -37,12 +35,6 @@ public class BombTextControl extends AbstractControl {
         text.setSize(0.3f);
         text.setQueueBucket(RenderQueue.Bucket.Transparent);
         text.setColor(ColorRGBA.Black);
-
-        EventManager.getInstance().subscribe(new BombTextChangedEventListener(e -> {
-            if (e instanceof String changed) {
-                addText(changed);
-            }
-        }));
     }
 
     @Override

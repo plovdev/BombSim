@@ -21,11 +21,11 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.plovdev.bombsim.audio.AudioManager;
-import com.plovdev.bombsim.events.EventManager;
-import com.plovdev.bombsim.events.impls.Sensitivity;
-import com.plovdev.bombsim.events.impls.SensitivityChangeListener;
+import com.plovdev.bombsim.events.GlobalEventManager;
+import com.plovdev.bombsim.events.SensitivityChangeEvent;
 import com.plovdev.bombsim.utils.PreferencesStorage;
 import org.jspecify.annotations.NonNull;
+import org.plovdev.eda.reflect.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,15 +61,6 @@ public class BombControl extends AbstractControl {
         this.textControl = new BombTextControl(assetManager, im);
         this.inputManager = im;
         this.cam = c;
-
-        EventManager.getInstance().subscribe(new SensitivityChangeListener(e -> {
-            if (e instanceof Sensitivity sens) {
-                switch (sens.getType()) {
-                    case Sensitivity.ROTATE -> this.rotateSensitivity = sens.getSensitivity();
-                    case Sensitivity.ZOOM -> this.zoomSensitivity = sens.getSensitivity();
-                }
-            }
-        }));
 
         inputManager.addMapping("Rotate", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("Drag", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -130,6 +121,15 @@ public class BombControl extends AbstractControl {
         Vector3f camPos = new Vector3f(0, 0, distance);
         cam.setLocation(camPos);
         cam.lookAt(bombPos, Vector3f.UNIT_Y);
+    }
+
+    @Subscribe(channel = GlobalEventManager.SENSITIVITY_CHANGE_EVENT)
+    private void updatSensitivity(@NonNull SensitivityChangeEvent event) {
+        float newValue = event.getValue();
+        switch (event.getSensType()) {
+            case ROTATE -> this.rotateSensitivity = newValue;
+            case ZOOM -> this.zoomSensitivity = newValue;
+        }
     }
 
     @Override
