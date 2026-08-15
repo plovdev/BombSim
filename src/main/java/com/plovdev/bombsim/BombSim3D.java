@@ -42,7 +42,7 @@ public class BombSim3D extends SimpleApplication {
         fpp = new FilterPostProcessor(assetManager);
         fpp.addFilter(statesFade);
         viewPort.addProcessor(fpp);
-        reattachBomb(new BombModelChangeEvent(PreferencesStorage.get("current-model", "assets/Models/Bomb-yellow_SCREEN.glb")));
+        reattachBomb(new BombModelChangeEvent(PreferencesStorage.get("current-model", "assets/Models/bomb-model_default.glb")));
 
         display = NiftyJmeDisplay.newNiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         nifty = display.getNifty();
@@ -60,6 +60,8 @@ public class BombSim3D extends SimpleApplication {
         GameScreensUpdaterState gameScreensUpdaterState = new GameScreensUpdaterState(nifty, statesFade);
         GlobalEventManager.registerListener(gameScreensUpdaterState);
         stateManager.attach(gameScreensUpdaterState);
+
+
     }
 
     @Subscribe(channel = GlobalEventManager.BOMB_MODEL_CHANGE_EVENT)

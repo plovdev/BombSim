@@ -8,6 +8,7 @@ target/
 *.ipr
 *.jar
 *.png~
+*.blend
 
 *.dylib
 *.dll
