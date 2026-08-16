@@ -166,8 +166,8 @@ public class BombPlantedAppState extends BaseAppState {
             defuseTimeLeft -= tpf;
             if (defuseTimeLeft <= 0) {
                 audioManager.playDDefuse(rootNode);
-                callbackTimer = 5;
                 defuse();
+                callbackTimer = 5;
             }
         }
     }

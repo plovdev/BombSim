@@ -40,6 +40,10 @@ public class GameAppState extends BaseAppState {
         }
     }
 
+    public void reset() {
+        application.enqueue(bombControl::reset);
+    }
+
     @Override
     protected void onEnable() {
         if (bombControl != null && bombNode != null) {

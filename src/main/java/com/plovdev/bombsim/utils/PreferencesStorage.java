@@ -24,7 +24,7 @@ public final class PreferencesStorage {
         try {
             log.info("Init settings...");
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
-            if (!SETTINGS.getBoolean("was-init", false)) {
+            if (!SETTINGS.getBoolean("was-init123", false)) {
                 SETTINGS.putBoolean("was-init", true);
                 loadDefault();
             } else {

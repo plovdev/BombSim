@@ -163,6 +163,17 @@ public class BombControl extends AbstractControl {
         }
     }
 
+    public void reset() {
+        distance = 10;
+        rotationX = 0;
+        rotationY = 0;
+
+        bombRotation.set(new Quaternion().fromAngles(0, 0, 0));
+        bombModel.setLocalRotation(bombRotation);
+
+        updateCamera();
+    }
+
     @Override
     protected void controlUpdate(float v) {
         if (!isEnabled() || bombModel == null || inputManager == null || cam == null) return;
