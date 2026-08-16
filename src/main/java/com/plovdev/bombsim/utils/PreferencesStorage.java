@@ -51,13 +51,13 @@ public final class PreferencesStorage {
     }
 
     private static void loadDefault() {
-        SETTINGS.setTitle("BombSim 3");
+        SETTINGS.setTitle("BombSim 3 MatFey Edition");
         SETTINGS.setGammaCorrection(true);
         SETTINGS.setVSync(true);
         SETTINGS.setSamples(8);
         SETTINGS.setResizable(true);
         SETTINGS.setWindowSize(700, 720);
-        SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);
+        SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL3);
     }
 
     private static void setupIcons() {
