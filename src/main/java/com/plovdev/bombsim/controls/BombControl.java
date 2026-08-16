@@ -1,6 +1,8 @@
 package com.plovdev.bombsim.controls;
 
 import com.jme3.anim.AnimComposer;
+import com.jme3.app.Application;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
@@ -23,6 +25,7 @@ import com.jme3.scene.control.AbstractControl;
 import com.plovdev.bombsim.audio.AudioManager;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import com.plovdev.bombsim.events.SensitivityChangeEvent;
+import com.plovdev.bombsim.states.BombPlantedAppState;
 import com.plovdev.bombsim.utils.PreferencesStorage;
 import org.jspecify.annotations.NonNull;
 import org.plovdev.eda.reflect.Subscribe;
@@ -33,7 +36,6 @@ public class BombControl extends AbstractControl {
     private static final Logger log = LoggerFactory.getLogger(BombControl.class);
 
     private Node bombModel;
-    private final InputManager inputManager;
     private float distance = 10f;
     private float rotationX = 0;
     private float rotationY = 0;
@@ -44,9 +46,14 @@ public class BombControl extends AbstractControl {
     private String bombText;
     private Quaternion bombRotation;
 
+    private final AssetManager assetManager;
+    private final InputManager inputManager;
     private final AudioManager audioManager;
+    private final AppStateManager stateManager;
+
     private final BombTextControl textControl;
     private final Camera cam;
+    private final BombPlantedAppState plantedAppState;
 
     private float rotateSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ROTATE_SENSITIVITY, 0.005f);
     private float zoomSensitivity = PreferencesStorage.getFloat(PreferencesStorage.ZOOM_SENSITIVITY, 0.25f);
@@ -56,17 +63,21 @@ public class BombControl extends AbstractControl {
     private final Vector3f clickPosition = new Vector3f();
     private final Vector3f clickDirection = new Vector3f();
 
-    public BombControl(InputManager im, AssetManager assetManager, Camera c) {
-        this.audioManager = new AudioManager(assetManager);
-        this.textControl = new BombTextControl(assetManager, im);
-        this.inputManager = im;
-        this.cam = c;
+    public BombControl(@NonNull Application application) {
+        this.assetManager = application.getAssetManager();
+        this.inputManager = application.getInputManager();
+        this.stateManager = application.getStateManager();
+        this.cam = application.getCamera();
+
+        this.textControl = new BombTextControl(assetManager, inputManager);
+        this.plantedAppState = stateManager.getState(BombPlantedAppState.class);
+        this.audioManager = stateManager.getState(AudioManager.class);
 
         inputManager.addMapping("Rotate", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("Drag", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("PressButton", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addMapping("ZoomIn", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
-        inputManager.addMapping("ZoomOut", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
+        inputManager.addMapping("ZoomIn", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
+        inputManager.addMapping("ZoomOut", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
 
         inputManager.addListener((ActionListener) (s, b, v) -> {
             if (!isEnabled()) return;
@@ -217,23 +228,22 @@ public class BombControl extends AbstractControl {
 
         String inputText = textControl.getChars();
         textControl.updateController(num);
-        audioManager.playButtonPress(clicked);
+        audioManager.playButtonClick(clicked);
 
         if (num.equals("*") || num.equals("#")) {
             String password = PreferencesStorage.get("password", "7355608");
             textControl.clear();
             if (inputText.equals(password)) {
-                if (num.equals("*")) {
-                    log.info("Bomb planting initiated.");
-                    // TODO: plant bomb
-                } else {
-                    log.info("Bomb defusal initiated.");
-                    // TODO: diffuse bomb
-                }
+                switchState(num.equals("*"));
             } else {
                 log.warn("Incorrect password entered: {}", inputText);
             }
         }
+    }
+
+    private void switchState(boolean enabled) {
+        plantedAppState.reset();
+        plantedAppState.setEnabled(enabled);
     }
 
     @Override

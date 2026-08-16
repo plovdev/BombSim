@@ -58,7 +58,7 @@ public class BombSimInitializer {
         nifty.addXml("assets/Interface/screens/menu.xml");
         nifty.addXml("assets/Interface/screens/main.xml");
 
-        AudioPlayerUtils.play(assetManager, root, null, null, "assets/Sounds/bomb-playback.wav", AudioData.DataType.Stream, true).setVolume(0.2f);
+        AudioPlayerUtils.play(assetManager, root, null, null, "assets/Sounds/bomb-playback.wav", AudioData.DataType.Stream, true, 0.2f);
     }
 
     private static void addLight(@NonNull Node root) {

@@ -8,9 +8,10 @@ import com.jme3.scene.Node;
 import org.jspecify.annotations.NonNull;
 
 public final class AudioPlayerUtils {
-    public static @NonNull AudioNode play(AssetManager assetManager, Node parent, Vector3f pos, Vector3f dir, String path, AudioData.DataType type, boolean loop) {
+    public static @NonNull AudioNode play(AssetManager assetManager, Node parent, Vector3f pos, Vector3f dir, String path, AudioData.DataType type, boolean loop, float vol) {
         AudioNode audioNode = new AudioNode(assetManager, path, type);
         audioNode.setLooping(loop);
+        audioNode.setVolume(vol);
         if (pos == null) {
             audioNode.setPositional(false);
         } else {

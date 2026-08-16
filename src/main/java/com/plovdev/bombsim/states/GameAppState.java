@@ -3,9 +3,6 @@ package com.plovdev.bombsim.states;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
-import com.jme3.asset.AssetManager;
-import com.jme3.input.InputManager;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.plovdev.bombsim.controls.BombControl;
 import de.lessvoid.nifty.Nifty;
@@ -30,11 +27,7 @@ public class GameAppState extends BaseAppState {
     protected void initialize(@NonNull Application app) {
         this.application = (SimpleApplication) app;
 
-        InputManager inputManager = application.getInputManager();
-        AssetManager assetManager = application.getAssetManager();
-        Camera camera = application.getCamera();
-
-        this.bombControl = new BombControl(inputManager, assetManager, camera);
+        this.bombControl = new BombControl(application);
         bombControl.setEnabled(false);
         bombNode.addControl(bombControl);
     }

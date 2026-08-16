@@ -6,9 +6,11 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.FadeFilter;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
+import com.plovdev.bombsim.audio.AudioManager;
 import com.plovdev.bombsim.controls.BombControl;
 import com.plovdev.bombsim.events.BombModelChangeEvent;
 import com.plovdev.bombsim.events.GlobalEventManager;
+import com.plovdev.bombsim.states.BombPlantedAppState;
 import com.plovdev.bombsim.states.GameAppState;
 import com.plovdev.bombsim.states.GameScreensUpdaterState;
 import com.plovdev.bombsim.states.MenuAppState;
@@ -31,6 +33,7 @@ public class BombSim3D extends SimpleApplication {
 
     private MenuAppState menuAppState;
     private GameAppState gameAppState;
+    private BombPlantedAppState plantedAppState;
 
     public BombSim3D(AppSettings settings) {
         setSettings(settings);
@@ -53,15 +56,16 @@ public class BombSim3D extends SimpleApplication {
         menuAppState = new MenuAppState(bombModel, nifty);
         gameAppState = new GameAppState(bombModel, nifty);
         gameAppState.setEnabled(false);
+        plantedAppState = new BombPlantedAppState(bombModel, nifty);
 
         stateManager.attach(menuAppState);
         stateManager.attach(gameAppState);
+        stateManager.attach(plantedAppState);
 
         GameScreensUpdaterState gameScreensUpdaterState = new GameScreensUpdaterState(nifty, statesFade);
         GlobalEventManager.registerListener(gameScreensUpdaterState);
         stateManager.attach(gameScreensUpdaterState);
-
-
+        stateManager.attach(new AudioManager());
     }
 
     @Subscribe(channel = GlobalEventManager.BOMB_MODEL_CHANGE_EVENT)
