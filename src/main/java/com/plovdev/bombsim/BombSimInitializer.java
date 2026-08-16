@@ -12,6 +12,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Node;
+import com.jme3.util.SkyFactory;
 import com.plovdev.bombsim.audio.AudioPlayerUtils;
 import com.plovdev.bombsim.controls.gui.MainScreenControl;
 import com.plovdev.bombsim.controls.gui.MenuScreenControl;
@@ -75,14 +76,14 @@ public class BombSimInitializer {
 //        fpp.addFilter(tension);
     }
 
-    public static void initSky(AssetManager assetManager, Node root) {
-//        root.attachChild(SkyFactory.createSky(assetManager,
-//                assetManager.loadTexture("assets/Textures/outroom.jpg"),
-//                assetManager.loadTexture("assets/Textures/outroom.jpg"),
-//                assetManager.loadTexture("assets/Textures/outroom.jpg"),
-//                assetManager.loadTexture("assets/Textures/outroom.jpg"),
-//                assetManager.loadTexture("assets/Textures/outroom.jpg"),
-//                assetManager.loadTexture("assets/Textures/outroom.jpg")));
+    public static void initSky(AssetManager assetManager, @NonNull Node root) {
+        root.attachChild(SkyFactory.createSky(assetManager,
+                assetManager.loadTexture("assets/Textures/outroom.jpg"),
+                assetManager.loadTexture("assets/Textures/outroom.jpg"),
+                assetManager.loadTexture("assets/Textures/outroom.jpg"),
+                assetManager.loadTexture("assets/Textures/outroom.jpg"),
+                assetManager.loadTexture("assets/Textures/outroom.jpg"),
+                assetManager.loadTexture("assets/Textures/outroom.jpg")));
     }
 
     private static void createSparkEmitter(Vector3f position, @NonNull Node node, AssetManager assetManager, String name) {

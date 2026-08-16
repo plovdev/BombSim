@@ -28,7 +28,11 @@ import java.util.concurrent.TimeUnit;
 public class BombPlantedAppState extends BaseAppState {
     private static final float TOTAL_TIME = 40.0f;
     private static final Logger log = LoggerFactory.getLogger(BombPlantedAppState.class);
-    private static final ScheduledExecutorService diodDisablerExecutor = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService diodDisablerExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread thread = new Thread(r, "diod-disabler");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     static {
         Globals.addShutdownHook(diodDisablerExecutor::close);
