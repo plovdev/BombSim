@@ -80,7 +80,7 @@ public class BombSim3D extends SimpleApplication {
             bombModel = (Node) assetManager.loadModel(path);
             if (bombModel != null) {
                 rootNode.attachChild(bombModel);
-                Utils.prepareModel(bombModel);
+                Utils.prepareModel(bombModel, assetManager);
             }
         } catch (Exception e) {
             log.error("Error to load bomb model: {}", path, e);

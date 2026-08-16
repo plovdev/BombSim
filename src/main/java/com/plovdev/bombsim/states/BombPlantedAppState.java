@@ -6,9 +6,12 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
 import com.jme3.light.PointLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.texture.Texture;
 import com.plovdev.bombsim.audio.AudioManager;
 import com.plovdev.bombsim.events.BombLoopFinished;
 import com.plovdev.bombsim.events.GlobalEventManager;
@@ -32,9 +35,13 @@ public class BombPlantedAppState extends BaseAppState {
     }
 
     private final Node bombNode;
-    private final Node diodNode;
-    private PointLight diodLight;
+    private final Geometry diod;
+    private final PointLight diodLight;
     private final Nifty nifty;
+
+    private final Material diodMat;
+    private Texture diodOn;
+    private Texture diodOff;
 
     private Node rootNode;
     private SimpleApplication application;
@@ -56,11 +63,10 @@ public class BombPlantedAppState extends BaseAppState {
 
     public BombPlantedAppState(@NonNull Node bombNode, Nifty nifty) {
         this.bombNode = bombNode;
-        this.diodNode = (Node) bombNode.getChild("Diod");
-        if (diodNode != null) {
-            diodLight = new PointLight(diodNode.getLocalTranslation(), ColorRGBA.Red.multLocal(100), 1.5f);
-        }
         this.nifty = nifty;
+        this.diod = (Geometry) bombNode.getChild("Diod_0");
+        this.diodLight = new PointLight(diod.getLocalTranslation(), ColorRGBA.Red.multLocal(100), 1.5f);
+        this.diodMat = diod.getMaterial();
     }
 
     @Override
@@ -71,6 +77,9 @@ public class BombPlantedAppState extends BaseAppState {
         this.camera = application.getCamera();
         this.audioManager = app.getStateManager().getState(AudioManager.class);
         this.rootNode = application.getRootNode();
+
+        this.diodOn = assetManager.loadTexture("assets/Textures/light_on.png");
+        this.diodOff = assetManager.loadTexture("assets/Textures/light_off.png");
     }
 
     @Override
@@ -161,8 +170,12 @@ public class BombPlantedAppState extends BaseAppState {
 
     private void enableDiodLight() {
         if (diodLight != null) {
+            diodMat.setTexture("DiffuseMap", diodOn);
             rootNode.addLight(diodLight);
-            diodDisablerExecutor.schedule(() -> application.enqueue(() -> rootNode.removeLight(diodLight)), 200, TimeUnit.MILLISECONDS);
+            diodDisablerExecutor.schedule(() -> application.enqueue(() -> {
+                rootNode.removeLight(diodLight);
+                diodMat.setTexture("DiffuseMap", diodOff);
+            }), 200, TimeUnit.MILLISECONDS);
         }
     }
 
