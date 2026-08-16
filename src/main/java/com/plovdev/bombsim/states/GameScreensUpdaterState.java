@@ -8,6 +8,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.post.filters.FadeFilter;
+import com.plovdev.bombsim.events.BombLoopFinished;
 import com.plovdev.bombsim.events.GameStateChangeEvent;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import de.lessvoid.nifty.Nifty;
@@ -30,6 +31,7 @@ public class GameScreensUpdaterState extends BaseAppState {
     private AppStateManager stateManager;
     private MenuAppState menuAppState;
     private GameAppState gameAppState;
+    private BombPlantedAppState plantedAppState;
 
     private FadeUpdateStep fadeStep = FadeUpdateStep.NONE;
     private float timer = 0f;
@@ -49,9 +51,15 @@ public class GameScreensUpdaterState extends BaseAppState {
 
         this.menuAppState = stateManager.getState(MenuAppState.class);
         this.gameAppState = stateManager.getState(GameAppState.class);
+        this.plantedAppState = stateManager.getState(BombPlantedAppState.class);
 
         inputManager.addMapping(BTM_KEY, new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addListener(btmListener, BTM_KEY);
+    }
+
+    @Subscribe(channel = GlobalEventManager.BOMB_LOOP_FINISHED)
+    private void onBombLoopFinished(BombLoopFinished event) {
+        btm();
     }
 
     @Subscribe(channel = GlobalEventManager.GAME_STATE_EVENT)
@@ -62,9 +70,14 @@ public class GameScreensUpdaterState extends BaseAppState {
             nifty.gotoScreen("empty");
             fadeStep = FadeUpdateStep.UPDATE_STATES_TO_GAME;
         } else if (event.getGameState() == GameStateChangeEvent.GameState.MENU) {
-            gameAppState.setEnabled(false);
-            menuAppState.setEnabled(true);
+            btm();
         }
+    }
+
+    private void btm() {
+        gameAppState.setEnabled(false);
+        plantedAppState.setEnabled(false);
+        menuAppState.setEnabled(true);
     }
 
     @Override
@@ -93,6 +106,7 @@ public class GameScreensUpdaterState extends BaseAppState {
                 fadeFilter.fadeIn();
                 menuAppState.setEnabled(false);
                 gameAppState.setEnabled(true);
+                plantedAppState.setEnabled(true);
                 fadeStep = FadeUpdateStep.NONE;
             }
         }

@@ -10,6 +10,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.plovdev.bombsim.audio.AudioManager;
+import com.plovdev.bombsim.events.BombLoopFinished;
+import com.plovdev.bombsim.events.GlobalEventManager;
 import com.plovdev.bombsim.utils.Globals;
 import de.lessvoid.nifty.Nifty;
 import org.jspecify.annotations.NonNull;
@@ -45,7 +47,12 @@ public class BombPlantedAppState extends BaseAppState {
     private float ticksTimer = 0.0f;
     private float secondsTimer = 0.0f;
     private float speedScaleFactor = 1f;
-    private boolean isExploded = false;
+    private float defuseTimeLeft = 10;
+    private float callbackTimer = 0;
+
+    private boolean canCallbackTriggs = false;
+    private volatile boolean isActive = false;
+    private volatile boolean isNeedDefuse = false;
 
     public BombPlantedAppState(@NonNull Node bombNode, Nifty nifty) {
         this.bombNode = bombNode;
@@ -54,7 +61,6 @@ public class BombPlantedAppState extends BaseAppState {
             diodLight = new PointLight(diodNode.getLocalTranslation(), ColorRGBA.Red.multLocal(100), 1.5f);
         }
         this.nifty = nifty;
-        setEnabled(false);
     }
 
     @Override
@@ -74,33 +80,64 @@ public class BombPlantedAppState extends BaseAppState {
 
     @Override
     protected void onEnable() {
+    }
+
+    public void plant() {
+        log.info("Planting the bomb");
+        isActive = true;
         audioManager.playPlant(rootNode);
     }
 
     @Override
     protected void onDisable() {
-        if (!isExploded) {
-            //audioManager.playDiffuse(rootNode);
-        }
+    }
+
+    public void dDefuse() {
+        log.info("Defusing the bomb");
+        isNeedDefuse = true;
+    }
+
+    public void aDefuse() {
+        audioManager.playADefuse(rootNode);
+        callbackTimer = 5;
+        defuse();
+    }
+
+    private void defuse() {
+        reset();
+        canCallbackTriggs = true;
+        log.info("Bomb has been defused.");
     }
 
     @Override
     public void update(float tpf) {
-        if (bombNode == null || isExploded || !isEnabled()) return;
+        if (!isEnabled()) return;
+
+        if (canCallbackTriggs) {
+            callbackTimer -= tpf;
+            if (callbackTimer <= 0) {
+                log.info("Triggering callback");
+                canCallbackTriggs = false;
+                GlobalEventManager.broadcastEvent(new BombLoopFinished());
+            }
+        }
+
+        if (!isActive) return;
 
         timeLeft -= tpf;
         if (timeLeft <= 0) {
-            isExploded = true;
-            setEnabled(false);
             audioManager.playExplode(bombNode);
+            reset();
+            callbackTimer = 10;
+            canCallbackTriggs = true;
             log.info("Bomb is explosed");
-
             //TODO: show explosion
         } else {
             secondsTimer += tpf;
             if (secondsTimer >= 1) {
                 secondsTimer = 0;
                 speedScaleFactor += 0.1f;
+                System.out.print("\rTime left: " + ((int) timeLeft));
                 //TODO: update UI timer
             }
 
@@ -109,6 +146,15 @@ public class BombPlantedAppState extends BaseAppState {
                 ticksTimer = 0;
                 audioManager.playTick(bombNode);
                 enableDiodLight();
+            }
+        }
+
+        if (isNeedDefuse) {
+            defuseTimeLeft -= tpf;
+            if (defuseTimeLeft <= 0) {
+                audioManager.playDDefuse(rootNode);
+                callbackTimer = 5;
+                defuse();
             }
         }
     }
@@ -125,6 +171,11 @@ public class BombPlantedAppState extends BaseAppState {
         ticksTimer = 0;
         secondsTimer = 0;
         speedScaleFactor = 1;
-        isExploded = false;
+        isActive = false;
+        isNeedDefuse = false;
+        defuseTimeLeft = 10;
+        callbackTimer = 0;
+        canCallbackTriggs = false;
+        //TODO: clear UI timer
     }
 }

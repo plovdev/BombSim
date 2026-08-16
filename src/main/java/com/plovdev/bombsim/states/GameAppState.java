@@ -46,7 +46,7 @@ public class GameAppState extends BaseAppState {
             application.enqueue(() -> {
                 nifty.gotoScreen("main");
                 bombControl.setEnabled(true);
-                log.info("BombControl attached to the bomb");
+                log.info("BombControl enabled to the bomb");
             });
         }
     }
@@ -56,7 +56,7 @@ public class GameAppState extends BaseAppState {
         if (bombControl != null && bombNode != null) {
             application.enqueue(() -> {
                 bombControl.setEnabled(false);
-                log.info("BombControl removed from the bomb");
+                log.info("BombControl disabled from the bomb");
             });
         }
     }

@@ -54,7 +54,7 @@ public final class PreferencesStorage {
         SETTINGS.setTitle("BombSim 3");
         SETTINGS.setGammaCorrection(true);
         SETTINGS.setVSync(true);
-        SETTINGS.setSamples(4);
+        SETTINGS.setSamples(8);
         SETTINGS.setResizable(true);
         SETTINGS.setWindowSize(700, 720);
         SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);

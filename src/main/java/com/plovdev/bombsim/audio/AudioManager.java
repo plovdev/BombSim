@@ -15,7 +15,17 @@ public class AudioManager extends BaseAppState {
 
     public void playPlant(Node root) {
         if (assetManager == null) throw new IllegalStateException("AssetManager is null");
-        play(assetManager, root, null, null, "assets/Sounds/plant.wav", AudioData.DataType.Buffer, false, 1);
+        play(assetManager, root, null, null, "assets/Sounds/planted.wav", AudioData.DataType.Buffer, false, 1);
+    }
+
+    public void playADefuse(Node root) {
+        if (assetManager == null) throw new IllegalStateException("AssetManager is null");
+        play(assetManager, root, null, null, "assets/Sounds/a-defused.wav", AudioData.DataType.Buffer, false, 1);
+    }
+
+    public void playDDefuse(Node root) {
+        if (assetManager == null) throw new IllegalStateException("AssetManager is null");
+        play(assetManager, root, null, null, "assets/Sounds/d-defused.wav", AudioData.DataType.Buffer, false, 1);
     }
 
     public void playTick(@NonNull Node bomb) {

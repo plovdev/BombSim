@@ -234,16 +234,19 @@ public class BombControl extends AbstractControl {
             String password = PreferencesStorage.get("password", "7355608");
             textControl.clear();
             if (inputText.equals(password)) {
-                switchState(num.equals("*"));
+                switchState(num.equals("#"));
             } else {
                 log.warn("Incorrect password entered: {}", inputText);
             }
         }
     }
 
-    private void switchState(boolean enabled) {
-        plantedAppState.reset();
-        plantedAppState.setEnabled(enabled);
+    private void switchState(boolean plant) {
+        if (plant) {
+            plantedAppState.plant();
+        } else {
+            plantedAppState.dDefuse();
+        }
     }
 
     @Override
