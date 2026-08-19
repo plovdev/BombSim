@@ -3,7 +3,6 @@ package com.plovdev.bombsim.controls;
 import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
-import com.jme3.input.InputManager;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -28,7 +27,7 @@ public class BombTextControl extends AbstractControl {
     private int end = visibleChars;
     private int tick = 1;
 
-    public BombTextControl(@NonNull AssetManager assetManager, @NonNull InputManager inputManager) {
+    public BombTextControl(@NonNull AssetManager assetManager) {
         BitmapFont font = assetManager.loadFont("Interface/Fonts/Default.fnt");
         font.setRightToLeft(false);
         text = new BitmapText(font);

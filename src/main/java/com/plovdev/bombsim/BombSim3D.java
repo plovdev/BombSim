@@ -8,6 +8,7 @@ import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.plovdev.bombsim.audio.AudioManager;
 import com.plovdev.bombsim.controls.BombControl;
+import com.plovdev.bombsim.controls.BombTimerControl;
 import com.plovdev.bombsim.events.BombModelChangeEvent;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import com.plovdev.bombsim.states.BombPlantedAppState;
@@ -53,6 +54,10 @@ public class BombSim3D extends SimpleApplication {
         BombSimInitializer.init(this, fpp, nifty);
 
         // Init states
+        BombTimerControl bombTimerControl = new BombTimerControl(assetManager);
+        bombTimerControl.setEnabled(false);
+        bombModel.addControl(bombTimerControl);
+
         menuAppState = new MenuAppState(bombModel, nifty);
         gameAppState = new GameAppState(bombModel, nifty);
         gameAppState.setEnabled(false);

@@ -36,6 +36,7 @@ public class BombControl extends AbstractControl {
     private static final Logger log = LoggerFactory.getLogger(BombControl.class);
 
     private Node bombModel;
+    private BombTimerControl bombTimerControl;
     private float distance = 10f;
     private float rotationX = 0;
     private float rotationY = 0;
@@ -69,7 +70,7 @@ public class BombControl extends AbstractControl {
         this.stateManager = application.getStateManager();
         this.cam = application.getCamera();
 
-        this.textControl = new BombTextControl(assetManager, inputManager);
+        this.textControl = new BombTextControl(assetManager);
         this.plantedAppState = stateManager.getState(BombPlantedAppState.class);
         this.audioManager = stateManager.getState(AudioManager.class);
 
@@ -118,6 +119,7 @@ public class BombControl extends AbstractControl {
         if (spatial != null) {
             bombModel = (Node) spatial;
             bombModel.addControl(textControl);
+            bombTimerControl = bombModel.getControl(BombTimerControl.class);
             bombText = "";
             bombRotation = new Quaternion().fromAngles(0, 0, 0);
             bombRotation.set(Quaternion.IDENTITY);
@@ -148,6 +150,9 @@ public class BombControl extends AbstractControl {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        if (bombTimerControl != null) {
+            bombTimerControl.setEnabled(enabled);
+        }
 
         if (enabled) {
             textControl.updateController(bombText);
@@ -255,8 +260,10 @@ public class BombControl extends AbstractControl {
     private void switchState(boolean plant) {
         if (plant) {
             plantedAppState.plant();
+            textControl.setVisibleChars(8);
         } else {
             plantedAppState.dDefuse();
+            textControl.setVisibleChars(10);
         }
     }
 

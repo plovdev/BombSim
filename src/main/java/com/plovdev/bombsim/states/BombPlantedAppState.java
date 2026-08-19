@@ -13,6 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.plovdev.bombsim.audio.AudioManager;
+import com.plovdev.bombsim.controls.BombTimerControl;
 import com.plovdev.bombsim.events.BombLoopFinished;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import com.plovdev.bombsim.utils.Globals;
@@ -26,7 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class BombPlantedAppState extends BaseAppState {
-    private static final float TOTAL_TIME = 40.0f;
+    private static final int TOTAL_TIME = 40;
     private static final Logger log = LoggerFactory.getLogger(BombPlantedAppState.class);
     private static final ScheduledExecutorService diodDisablerExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
         Thread thread = new Thread(r, "diod-disabler");
@@ -42,6 +43,7 @@ public class BombPlantedAppState extends BaseAppState {
     private final Geometry diod;
     private final PointLight diodLight;
     private final Nifty nifty;
+    private final BombTimerControl bombTimerControl;
 
     private final Material diodMat;
     private Texture diodOn;
@@ -54,9 +56,10 @@ public class BombPlantedAppState extends BaseAppState {
     private Camera camera;
     private AudioManager audioManager;
 
-    private float timeLeft = TOTAL_TIME;
+    private float timeLeft = 41;
     private float ticksTimer = 0.0f;
     private float secondsTimer = 0.0f;
+    private int bombTimer = TOTAL_TIME;
     private float speedScaleFactor = 1f;
     private float defuseTimeLeft = 10;
     private float callbackTimer = 0;
@@ -71,6 +74,7 @@ public class BombPlantedAppState extends BaseAppState {
         this.diod = (Geometry) bombNode.getChild("Diod_0");
         this.diodLight = new PointLight(diod.getLocalTranslation(), ColorRGBA.Red.multLocal(100), 1.5f);
         this.diodMat = diod.getMaterial();
+        this.bombTimerControl = bombNode.getControl(BombTimerControl.class);
     }
 
     @Override
@@ -98,6 +102,7 @@ public class BombPlantedAppState extends BaseAppState {
     public void plant() {
         log.info("Planting the bomb");
         isActive = true;
+        bombTimerControl.setEnabled(true);
         audioManager.playPlant(rootNode);
     }
 
@@ -150,8 +155,8 @@ public class BombPlantedAppState extends BaseAppState {
             if (secondsTimer >= 1) {
                 secondsTimer = 0;
                 speedScaleFactor += 0.1f;
-                System.out.print("\rTime left: " + ((int) timeLeft));
-                //TODO: update UI timer
+                bombTimerControl.updateTimer(bombTimer);
+                bombTimer--;
             }
 
             ticksTimer += tpf * speedScaleFactor;
@@ -185,6 +190,7 @@ public class BombPlantedAppState extends BaseAppState {
 
     public void reset() {
         timeLeft = TOTAL_TIME;
+        bombTimer = TOTAL_TIME;
         ticksTimer = 0;
         secondsTimer = 0;
         speedScaleFactor = 1;
@@ -193,6 +199,7 @@ public class BombPlantedAppState extends BaseAppState {
         defuseTimeLeft = 10;
         callbackTimer = 0;
         canCallbackTriggs = false;
-        //TODO: clear UI timer
+        bombTimerControl.reset();
+        bombTimerControl.setEnabled(false);
     }
 }
