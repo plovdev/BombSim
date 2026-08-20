@@ -10,6 +10,7 @@ import com.plovdev.bombsim.audio.AudioManager;
 import com.plovdev.bombsim.controls.BombControl;
 import com.plovdev.bombsim.controls.BombTimerControl;
 import com.plovdev.bombsim.events.BombModelChangeEvent;
+import com.plovdev.bombsim.events.CloseSplashScreen;
 import com.plovdev.bombsim.events.GlobalEventManager;
 import com.plovdev.bombsim.states.BombPlantedAppState;
 import com.plovdev.bombsim.states.GameAppState;
@@ -71,6 +72,9 @@ public class BombSim3D extends SimpleApplication {
         GlobalEventManager.registerListener(gameScreensUpdaterState);
         stateManager.attach(gameScreensUpdaterState);
         stateManager.attach(new AudioManager());
+
+        // Post init
+        GlobalEventManager.broadcastEvent(new CloseSplashScreen());
     }
 
     @Subscribe(channel = GlobalEventManager.BOMB_MODEL_CHANGE_EVENT)

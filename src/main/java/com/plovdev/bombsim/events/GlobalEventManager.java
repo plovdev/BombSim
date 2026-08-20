@@ -8,6 +8,7 @@ public final class GlobalEventManager {
     public static final String BOMB_MODEL_CHANGE_EVENT = "events.models.bomb-change";
     public static final String SENSITIVITY_CHANGE_EVENT = "events.sensitivity-change";
     public static final String BOMB_LOOP_FINISHED = "events.bomb-loop.finished";
+    public static final String CLOSE_SPLASH_SCREEN = "events.splash-screen.close";
 
     private static final EventManager EVENT_MANAGER = new EventManager();
 

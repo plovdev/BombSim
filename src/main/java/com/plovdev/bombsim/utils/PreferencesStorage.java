@@ -24,7 +24,7 @@ public final class PreferencesStorage {
         try {
             log.info("Init settings...");
             System.setProperty("org.lwjgl.openal.dopperFactor", "0.0");
-            if (!SETTINGS.getBoolean("was-init123", false)) {
+            if (!SETTINGS.getBoolean("was-init1", false)) {
                 SETTINGS.putBoolean("was-init", true);
                 loadDefault();
             } else {
@@ -57,7 +57,7 @@ public final class PreferencesStorage {
         SETTINGS.setSamples(8);
         SETTINGS.setResizable(true);
         SETTINGS.setWindowSize(700, 720);
-        SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL41);
+        SETTINGS.setRenderer(AppSettings.LWJGL_OPENGL40);
     }
 
     private static void setupIcons() {
